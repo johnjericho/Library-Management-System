@@ -5,7 +5,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 
-import com.toedter.calendar.JDateChooser;
+//import com.toedter.calendar.JDateChooser;
 
 import java.awt.Color;
 import javax.swing.JSeparator;
@@ -68,11 +68,11 @@ public class BookMaintenanceView extends JPanel {
         componentsBorder.setBounds(20, 21, 1083, 252);
         componentsBorder.setLayout(null);
         add(componentsBorder);
-        
-    	JDateChooser dateChooser = new JDateChooser();
-    	dateChooser.setBackground(Color.RED);
-      	dateChooser.setBounds(685, 148, 191, 20);
-     	componentsBorder.add(dateChooser);
+//        
+//    	JDateChooser dateChooser = new JDateChooser();
+//    	dateChooser.setBackground(Color.RED);
+//      	dateChooser.setBounds(685, 148, 191, 20);
+//     	componentsBorder.add(dateChooser);
            
         // Labels
         
