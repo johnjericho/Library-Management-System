@@ -1,15 +1,16 @@
-package controller;
+package services.BookModuleServices;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import dao.CategoryDAO;
+
+import dao.BookModuleDAO.CategoryDAO;
 import model.Category;
 
-public class CategoryController {
-	
+public class CategoryServices {
+
 	private CategoryDAO categoryDao;
 	
-	public CategoryController(CategoryDAO categoryDao) {
+	public CategoryServices(CategoryDAO categoryDao) {
 		this.categoryDao = categoryDao;
 	}
 	
@@ -20,15 +21,16 @@ public class CategoryController {
 		
 		if(categoryName.isEmpty()) throw new IllegalArgumentException("Category Cannot be empty!");
 		if(isExisting(categoryName)) throw new IllegalArgumentException("Category already exist!");
-		
+		if(categoryName.length() > 255) throw new IllegalArgumentException("Category is too long! Max 255 characters."); 
+				
 		try {
-		categoryDao.addCategory(categoryName);
+			categoryDao.addCategory(categoryName);
 		}catch(SQLException e) {
 			throw new RuntimeException("Database connection error!");
 		}
 	}
 	
-	   private boolean isExisting(String categoryName) {
+	   public boolean isExisting(String categoryName) {
 		   categoryName = categoryName.trim().replaceAll("\\s+", " ");
 		   try {
 		    boolean isExisting = categoryDao.isExisting(categoryName);
@@ -58,9 +60,10 @@ public class CategoryController {
 		   if(categoryId < 0) throw new IllegalArgumentException("Select category first!"); 			   
 		   if(categoryName.isEmpty()) throw new IllegalArgumentException("Category cannot be empty!"); 		
 		   if(isExisting(categoryName)) throw new IllegalArgumentException("Category already exist");
+		   if(categoryName.length() > 255) throw new IllegalArgumentException("Category is too long! Max 255 characters."); 
 		  
 		   try {
-		   categoryDao.updateCategory(categoryId, categoryName);
+			   categoryDao.updateCategory(categoryId, categoryName);
 		   }catch(SQLException e) {
 			   e.printStackTrace();
 			   throw new RuntimeException("Database Connection error!");	 
@@ -71,7 +74,7 @@ public class CategoryController {
 	   public void deleteCategory(int categoryId) {
 		   if(categoryId < 0) throw new IllegalArgumentException("Select category first!");
 		   try {
-		   categoryDao.deleteCategory(categoryId);
+			   categoryDao.deleteCategory(categoryId);
 		   }catch(SQLException e) {
 			   throw new RuntimeException("Database connection error!");
 		   }   
@@ -100,9 +103,7 @@ public class CategoryController {
 		    }
 		    return result.toString().trim();
 		}
-   
-	   
-	   
-	   
-
+	
+	
+	
 }

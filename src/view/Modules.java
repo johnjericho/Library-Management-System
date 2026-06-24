@@ -2,6 +2,8 @@ package view;
 
 import javax.swing.JPanel;
 
+import view.BookModule.BookMaintenanceView;
+import view.UserModule.UserMaintenanceView;
 
 import javax.swing.JButton;
 import java.awt.Color;
@@ -20,6 +22,8 @@ public class Modules extends JPanel {
 
     // BINAGO: AdminDash → MainFrame na ang reference
     private MainFrame mainFrame;
+    private JButton btnInventory_1;
+    private JButton btnUserMaintenance;
    
 
     
@@ -53,13 +57,23 @@ public class Modules extends JPanel {
         	}
         });
         btnFileMaintenance.setFont(new Font("Tahoma", Font.BOLD, 13));
-        btnFileMaintenance.setBounds(20, 273, 200, 30);
+        btnFileMaintenance.setBounds(21, 314, 200, 30);
         add(btnFileMaintenance);
 
         btnInventory = new JButton("CIRCULATION");
         btnInventory.setFont(new Font("Tahoma", Font.BOLD, 13));
-        btnInventory.setBounds(20, 314, 200, 30);
+        btnInventory.setBounds(20, 273, 200, 30);
         add(btnInventory);
+        
+        btnInventory_1 = new JButton("INVENTORY");
+        btnInventory_1.setFont(new Font("Tahoma", Font.BOLD, 13));
+        btnInventory_1.setBounds(20, 396, 200, 30);
+        add(btnInventory_1);
+        
+        btnUserMaintenance = new JButton("USER MAINTENANCE");
+        btnUserMaintenance.setFont(new Font("Tahoma", Font.BOLD, 13));
+        btnUserMaintenance.setBounds(21, 355, 200, 30);
+        add(btnUserMaintenance);
     }
 
     public void initAction() {
@@ -69,6 +83,10 @@ public class Modules extends JPanel {
 
         btnFileMaintenance.addActionListener(e ->
             mainFrame.showPanel(new BookMaintenanceView()));
+        
+        btnUserMaintenance.addActionListener( e -> {
+        	mainFrame.showPanel(new UserMaintenanceView());
+        });
 
         
     }

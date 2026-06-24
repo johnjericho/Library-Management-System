@@ -1,4 +1,4 @@
-package view;
+package view.BookModule;
 
 import java.awt.Font;
 import java.util.ArrayList;
@@ -10,7 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import controller.PublisherController;
+import javax.swing.SwingUtilities;
+
 import model.Publisher;
 import utility.AppContext;
 import utility.TableRefresherHelper;
@@ -20,6 +21,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+
+import controller.BookModule.PublisherController;
+
 import javax.swing.JScrollPane;
 import java.awt.Component;
 import javax.swing.JSeparator;
@@ -42,9 +46,11 @@ public class PublisherView extends JDialog {
 	private JTable tblPublisher;
 	private DefaultTableModel tblModel; 
 	private int selectedPublisherId = -1 ;
+	private boolean isEditMode = false;
 	
 	private PublisherController publisherController = AppContext.getInstance().getPublisherController();
-
+    
+	private String selectedPublisher;
 
 
 	
@@ -101,12 +107,14 @@ public class PublisherView extends JDialog {
 			btnUpdate.setForeground(new Color(51, 102, 51));
 			btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 15));
 			btnUpdate.setBounds(133, 68, 95, 20);
+			btnUpdate.setEnabled(false);
 			componentsBorder.add(btnUpdate);
 			
 			btnDelete = new JButton("DELETE");
 			btnDelete.setForeground(new Color(51, 102, 51));
 			btnDelete.setFont(new Font("Tahoma", Font.BOLD, 15));
 			btnDelete.setBounds(256, 68, 95, 20);
+			btnDelete.setEnabled(false);
 			componentsBorder.add(btnDelete);
 			
 			lblSearch = new JLabel("Search");
@@ -151,9 +159,44 @@ public class PublisherView extends JDialog {
 			addPublisher();
 		});	
 		
-		loadPublisher();	
 		TableRefresherHelper.tblRefresher(3000, () ->{ loadPublisher(); });
 
+		tblPublisher.getSelectionModel().addListSelectionListener(e -> {
+		    if (e.getValueIsAdjusting()) return;
+
+		    int selectedRow = tblPublisher.getSelectedRow();
+		    if (selectedRow != -1) {
+
+		        int id = (int) tblModel.getValueAt(selectedRow, 0);
+		        String name = (String) tblModel.getValueAt(selectedRow, 1);
+
+		        // ⭐ SAME PATTERN AS CATEGORY VIEW
+		        if (selectedPublisherId != id) {
+		            selectedPublisherId = id;
+		            txtPublisher.setText(name);
+		            enterEditMode();
+		        }
+		    }
+		});
+		
+		// ESC key
+				// Sa initAction() — globally nakikinig sa ESC kahit saan naka-focus
+				getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
+				    .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escapeAction");
+
+				getRootPane().getActionMap().put("escapeAction", new javax.swing.AbstractAction() {
+				    public void actionPerformed(java.awt.event.ActionEvent e) {
+				        tryExitEditMode();
+				    }
+				});
+
+				// Empty area click
+				contentPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+				    public void mouseClicked(java.awt.event.MouseEvent e) {
+				        tryExitEditMode();
+				    }
+				});
+		
 		btnUpdate.addActionListener(e -> {
 			updatePublisher();
 		});
@@ -164,32 +207,87 @@ public class PublisherView extends JDialog {
 		
 		 searchPublisher();
 		
-		tblPublisher.getSelectionModel().addListSelectionListener(e -> {
-			if (!e.getValueIsAdjusting()) { // para hindi mag-fire ng dalawang beses mouse, click down return true, release return false , gumamit ng ng ! para , to reverse the return, for cleaner industry standard not false == false
-		        int selectedRow = tblPublisher.getSelectedRow(); // ✅ local variable lang — hindi kailangan sa ibang methods
-		        
-		        if (selectedRow != -1) { // may selected na row
-		            // kumuha ng data sa selected row
-		        	Object id =  tblModel.getValueAt(selectedRow, 0);
-		        	Object name = tblModel.getValueAt(selectedRow, 1);  // column 1 = name
-		            
-		            // ilagay sa text field
-		            txtPublisher.setText((String) name);
-		            
-		            // i-store yung id (para magamit sa edit/delete)
-		            selectedPublisherId = (int) id;
-		        }
-		    }
-				
-		});
 				txtSearch.getDocument().addDocumentListener(new DocumentListener() {
 				    public void insertUpdate(DocumentEvent e) { searchPublisher(); }
 				    public void removeUpdate(DocumentEvent e) { searchPublisher(); }
 				    public void changedUpdate(DocumentEvent e) { searchPublisher(); }
 				});
 		
-		
+				SwingUtilities.invokeLater(() -> {
+					restoreSelectedRow();
+				});
 	} 
+	
+	
+	
+
+	private void restoreSelectedRow() {
+		if(selectedPublisherId == -1) {
+			return;
+		}
+		
+		for(int i = 0; i < tblModel.getRowCount(); i++) {
+			int rowId = (int) tblModel.getValueAt(i, 0); //get the value each i ->row from 0 ->column id
+			if(rowId == selectedPublisherId) {
+				tblPublisher.setRowSelectionInterval(i, i); // from i selected row end to to also i, start -> end highlight 
+				break;
+			}
+		}
+		
+	}
+	
+
+	
+	private void enterEditMode() {
+	    isEditMode = true;
+	    btnUpdate.setEnabled(true);
+	    btnDelete.setEnabled(true);
+	    btnAdd.setEnabled(false); // optional — para hindi makalito
+	}
+
+	private void exitEditMode() {
+	    isEditMode = false;
+	    selectedPublisherId = -1;
+	    txtPublisher.setText("");
+	    btnUpdate.setEnabled(false);
+	    btnDelete.setEnabled(false);
+	    btnAdd.setEnabled(true);
+	}
+	
+	private void tryExitEditMode() {
+	    if (!isEditMode) return; // wala namang edit mode, wala sa gagawin
+
+	    // hanapin ang original name sa table
+	    String originalName = "";
+	    for (int i = 0; i < tblModel.getRowCount(); i++) {
+	        if ((int) tblModel.getValueAt(i, 0) == selectedPublisherId) {
+	            originalName = (String) tblModel.getValueAt(i, 1);
+	            break;
+	        }
+	    }
+
+	    String currentText = txtPublisher.getText().trim();
+
+	    if (!currentText.equals(originalName)) {
+	        // may binago ang user — mag-prompt
+	        int confirm = JOptionPane.showConfirmDialog(
+	            this,
+	            "Discard changes?",
+	            "Unsaved Changes",
+	            JOptionPane.YES_NO_OPTION
+	        );
+	        if (confirm == JOptionPane.YES_OPTION) {
+	            exitEditMode();
+	            tblPublisher.clearSelection();
+	        }
+	        // kung NO — manatili sa edit mode, walang mangyayari
+	    } else {
+	        // walang binago — exit agad, walang prompt
+	        exitEditMode();
+	        tblPublisher.clearSelection();
+	    }
+	}
+	
 	 
 	 public void addPublisher() {
 		 try {
@@ -212,6 +310,9 @@ public class PublisherView extends JDialog {
 			 Object[] list = {publisher.getPublisherId(), publisher.getPublisherName() };
 			 tblModel.addRow(list);
 		 }
+		 SwingUtilities.invokeLater(() -> {
+				restoreSelectedRow();
+			});
 		 }catch(Exception e) {
 			 JOptionPane.showMessageDialog(this, e.getMessage(), "Warning", JOptionPane.ERROR_MESSAGE);
 		 }
@@ -224,7 +325,7 @@ public class PublisherView extends JDialog {
 		 try {
 		 publisherController.updatePublisher(selectedPublisherId, editedPublisher);
 		 JOptionPane.showMessageDialog(this, "Successfully updated!");
-		 selectedPublisherId = -1;
+	      exitEditMode();
 		 }catch(Exception e) {
 		     JOptionPane.showMessageDialog(this, e.getMessage(), "Warning", JOptionPane.ERROR_MESSAGE);
 		 }
@@ -235,12 +336,13 @@ public class PublisherView extends JDialog {
 	 
 	 
 	 public void deletePublisher() {
+			int confirm = JOptionPane.showConfirmDialog(this, "Confirm delete category","WARNING",JOptionPane.YES_NO_OPTION);
+			if(confirm != JOptionPane.YES_OPTION) return;
 		 try {
 		 int publisherid = selectedPublisherId;
 		 publisherController.deletePublisher(publisherid);
 		 JOptionPane.showMessageDialog(this, "Successfully deleted!");
-		 txtPublisher.setText("");
-		 selectedPublisherId = -1;
+	       exitEditMode();
 		 }catch(Exception e) {
 			 JOptionPane.showMessageDialog(this, e.getMessage(), "Warning", JOptionPane.ERROR_MESSAGE);
 		 }
@@ -265,11 +367,20 @@ public class PublisherView extends JDialog {
 		    for (Publisher a : list) {
 		        tblModel.addRow(new Object[]{a.getPublisherId(), a.getPublisherName()});
 		    }
+		    SwingUtilities.invokeLater(() -> {
+				restoreSelectedRow();
+			});
       }catch(Exception e) {
     	  JOptionPane.showMessageDialog(this, e.getMessage());
       } 
 	 }
 	
+	 public String getSelectedPublisher() {
+		 return selectedPublisher;
+	 }
 	 
+	 public int getSelectedPublisherId() {
+		 return selectedPublisherId;
+	 }
 	 
 }

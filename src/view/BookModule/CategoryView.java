@@ -1,5 +1,4 @@
-package view;
-import controller.CategoryController;
+package view.BookModule;
 import model.Category;
 import utility.AppContext;
 import utility.TableRefresherHelper;
@@ -13,6 +12,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+
+import controller.BookModule.CategoryController;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -36,7 +38,7 @@ public class CategoryView extends JDialog {
 	private JButton btnDelete;
 	
 	private DefaultTableModel tblModel;
-	private JTable categoryTable;
+	private JTable tblCategory;
 	private JScrollPane scrollPane;
 
 	private CategoryController categoryController = AppContext.getInstance().getCategoryController();
@@ -127,9 +129,9 @@ public class CategoryView extends JDialog {
 		public boolean  isCellEditable(int row, int column){ return false; }
 	   };  
 	   
-	   categoryTable = new JTable(tblModel);
+	   tblCategory = new JTable(tblModel);
 			
-	   scrollPane = new JScrollPane(categoryTable);
+	   scrollPane = new JScrollPane(tblCategory);
 	   scrollPane.setBounds(38, 241, 803, 412);
 	   contentPanel.add(scrollPane);
 		
@@ -150,19 +152,20 @@ public class CategoryView extends JDialog {
 		TableRefresherHelper.tblRefresher(3000, () ->{ loadCategory(); });
 		
 		
-		categoryTable.getSelectionModel().addListSelectionListener(e -> {
-		    if (!e.getValueIsAdjusting()) {
-		        int selectedRow = categoryTable.getSelectedRow();
-		        if (selectedRow != -1) {
-		            int id = (int) tblModel.getValueAt(selectedRow, 0);
-		            String name = (String) tblModel.getValueAt(selectedRow, 1);
-		            
-		            if(selectedCategoryId != id) {
-			            selectedCategoryId = id;
-		            	txtCategory.setText(name);
-			            enterEditMode(); // ← DAGDAG
-		            }
-		            
+		tblCategory.getSelectionModel().addListSelectionListener(e -> {
+		    if (e.getValueIsAdjusting()) return;
+
+		    int selectedRow = tblCategory.getSelectedRow();
+		    if (selectedRow != -1) {
+
+		        int id = (int) tblModel.getValueAt(selectedRow, 0);
+		        String name = (String) tblModel.getValueAt(selectedRow, 1);
+
+		        // ⭐ SAME PATTERN AS CATEGORY VIEW
+		        if (selectedCategoryId != id) {
+		            selectedCategoryId = id;
+		            txtCategory.setText(name);
+		            enterEditMode();
 		        }
 		    }
 		});
@@ -199,15 +202,15 @@ public class CategoryView extends JDialog {
 			    public void changedUpdate(DocumentEvent e) { searchCategory(); }	
 		});
 		
+		
+		// itago ang ID column para hindi makita ng user
+		tblCategory.getColumnModel().getColumn(0).setMinWidth(0);
+		tblCategory.getColumnModel().getColumn(0).setMaxWidth(0);
+		tblCategory.getColumnModel().getColumn(0).setWidth(0);
+		
 		SwingUtilities.invokeLater(() -> {
 			restoreSelectedRow();
 		});
-		
-		
-		// itago ang ID column para hindi makita ng user
-		categoryTable.getColumnModel().getColumn(0).setMinWidth(0);
-		categoryTable.getColumnModel().getColumn(0).setMaxWidth(0);
-		categoryTable.getColumnModel().getColumn(0).setWidth(0);
 	}
 	
 	
@@ -220,7 +223,7 @@ public class CategoryView extends JDialog {
 		for(int i = 0; i < tblModel.getRowCount(); i++) {
 			int rowId = (int) tblModel.getValueAt(i, 0); //get the value each i ->row from 0 ->column id
 			if(rowId == selectedCategoryId) {
-				categoryTable.setRowSelectionInterval(i, i); // from i selected row end to to also i, start -> end highlight 
+				tblCategory.setRowSelectionInterval(i, i); // from i selected row end to to also i, start -> end highlight 
 				break;
 			}
 		}
@@ -269,13 +272,13 @@ public class CategoryView extends JDialog {
 	        );
 	        if (confirm == JOptionPane.YES_OPTION) {
 	            exitEditMode();
-	            categoryTable.clearSelection();
+	            tblCategory.clearSelection();
 	        }
 	        // kung NO — manatili sa edit mode, walang mangyayari
 	    } else {
 	        // walang binago — exit agad, walang prompt
 	        exitEditMode();
-	        categoryTable.clearSelection();
+	        tblCategory.clearSelection();
 	    }
 	}
 	
@@ -283,7 +286,6 @@ public class CategoryView extends JDialog {
 		String inputedCategory = txtCategory.getText();
 		try {
 		categoryController.addCategory(inputedCategory);	
-		loadCategory();
 		JOptionPane.showMessageDialog(this, "Successfully added");
 		txtCategory.setText("");
 		selectedCategoryId = -1;

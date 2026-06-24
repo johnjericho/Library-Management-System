@@ -1,4 +1,4 @@
-package view;
+package view.BookModule;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -8,6 +8,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
+import controller.BookModule.AuthorController;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,14 +17,16 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JSeparator;
 
-import controller.AuthorController;
 import model.Author;
 import utility.AppContext;
 import utility.TableRefresherHelper;
@@ -30,7 +34,7 @@ import utility.TableRefresherHelper;
 import java.lang.IllegalArgumentException;
 
 
-
+ 	
 public class AuthorView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -42,11 +46,13 @@ public class AuthorView extends JDialog {
 	private JButton btnDelete;
 	private JButton btnUpdate;
 	private JButton btnAdd;
-	
-	
-    
+	  
 	private AuthorController authorController = AppContext.getInstance().getAuthorController();
 	private int selectedAuthorId = -1 ;
+	private boolean isEditMode = false;
+	
+    private String selectedAuthorName; // use to carry the value to bookmaintenanceview
+
 	
 	public AuthorView() {		    
 		execute();
@@ -67,7 +73,7 @@ public class AuthorView extends JDialog {
 		this.setContentPane(contentPanel);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
+		this.setResizable(false);
 	}
 	
 	public void initComponents() {
@@ -114,12 +120,14 @@ public class AuthorView extends JDialog {
 		btnUpdate.setForeground(new Color(51, 102, 51));
 		btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnUpdate.setBounds(133, 68, 95, 20);
+		btnUpdate.setEnabled(false); 
 		componentsBorder.add(btnUpdate);
 		
 		btnDelete = new JButton("DELETE");
 		btnDelete.setForeground(new Color(51, 102, 51));
 		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnDelete.setBounds(256, 68, 95, 20);
+		btnDelete.setEnabled(false);
 		componentsBorder.add(btnDelete);
 		
 		JSeparator separator = new JSeparator();
@@ -156,6 +164,44 @@ public class AuthorView extends JDialog {
 			addAuthor();
 			}); 
 		
+		TableRefresherHelper.tblRefresher(3000, () ->{ loadAuthor(); });
+
+		tblAuthor.getSelectionModel().addListSelectionListener(e -> {
+		    if (e.getValueIsAdjusting()) return;
+
+		    int selectedRow = tblAuthor.getSelectedRow();
+		    if (selectedRow != -1) {
+
+		        int id = (int) tblModel.getValueAt(selectedRow, 0);
+		        String name = (String) tblModel.getValueAt(selectedRow, 1);
+
+		        // ⭐ SAME PATTERN AS CATEGORY VIEW
+		        if (selectedAuthorId != id) {
+		            selectedAuthorId = id;
+		            txtAuthor.setText(name);
+		            enterEditMode();
+		        }
+		    }
+		});
+		
+		//ESC
+		getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
+		    .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escapeAction");
+
+		getRootPane().getActionMap().put("escapeAction", new javax.swing.AbstractAction() {
+		    public void actionPerformed(java.awt.event.ActionEvent e) {
+		        tryExitEditMode();
+		    }
+		});
+
+		// Empty area click
+		contentPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+		    public void mouseClicked(java.awt.event.MouseEvent e) {
+		        tryExitEditMode();
+		    }
+		});
+		
+		
 		btnUpdate.addActionListener(e->{
 			updateAuthor();
 		});
@@ -166,56 +212,101 @@ public class AuthorView extends JDialog {
 			}
 		});
 		
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-		    @Override
-		    public void windowClosing(java.awt.event.WindowEvent e) {
-		        TableRefresherHelper.stopRefresher();
-		    }
-		});
 		
-		tblAuthor.getSelectionModel().addListSelectionListener(e -> {
-			if (!e.getValueIsAdjusting()) { // para hindi mag-fire ng dalawang beses
-		        int selectedRow = tblAuthor.getSelectedRow(); // ✅ local variable lang — hindi kailangan sa ibang methods
-		        
-		        if (selectedRow != -1) { // may selected na row
-		            // kumuha ng data sa selected row
-		        	int id = (int) tblModel.getValueAt(selectedRow, 0);
-		        	String name = (String) tblModel.getValueAt(selectedRow, 1);  // column 1 = name
-		            
-		            // ilagay sa text field
-		            txtAuthor.setText(name);
-		            
-		            // i-store yung id (para magamit sa edit/delete)
-		            selectedAuthorId = id;
-		        }
-		    }
-			
-		});
-		
-		// getDocument() — kinukuha ang "document" ng txtSearch (yung laman/content ng text field)
-		// addDocumentListener() — naglalagay ng listener na mag-mo-monitor sa bawat pagbabago ng document
-		txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-		    
-		    // insertUpdate — fires pag NAGDAGDAG ng character ang user (nag-type)
-		    // example: "" → "J" → "Jo" → "Joh" → "John"
+		txtSearch.getDocument().addDocumentListener(new DocumentListener() {	    
 		    public void insertUpdate(DocumentEvent e) { searchAuthor(); }
-
-		    // removeUpdate — fires pag NAG-BURA ng character ang user (nag-backspace/delete)
-		    // example: "John" → "Joh" → "Jo" → "J" → ""
 		    public void removeUpdate(DocumentEvent e) { searchAuthor(); }
-
-		    // changedUpdate — fires pag nagbago ang STYLE ng text (bold, italic, font size)
-		    // rarely fires sa JTextField — mostly sa JTextPane/JEditorPane na lang
-		    // nilalagay pa rin dahil REQUIRED (interface)
 		    public void changedUpdate(DocumentEvent e) { searchAuthor(); }
 		});
 		
-		TableRefresherHelper.tblRefresher(3000, () ->{ loadAuthor(); });
 
+		 tblAuthor.addMouseListener(new MouseAdapter() {
+		        public void mouseClicked(MouseEvent e) {
+		            if (e.getClickCount() == 2) { // double-click = "pumili ako nito"
+		                int row = tblAuthor.getSelectedRow();
+		                if (row != -1) {
+		                    selectedAuthorName = tblAuthor.getValueAt(row, 1).toString(); // column 1 = author name, halimbawa
+		                    dispose(); // isasara ang dialog → bumabalik na control sa caller
+		                }
+		            }
+		        }
+		    });
 		
-		
+		SwingUtilities.invokeLater(() -> {
+			restoreSelectedRow();
+		});
+	
 		
 	}
+	
+	
+	private void restoreSelectedRow() {
+		if(selectedAuthorId == -1) {
+			return;
+		}
+		
+		for(int i = 0; i < tblModel.getRowCount(); i++) {
+			int rowId = (int) tblModel.getValueAt(i, 0); //get the value each i ->row from 0 ->column id
+			if(rowId == selectedAuthorId) {
+				tblAuthor.setRowSelectionInterval(i, i); // from i selected row end to to also i, start -> end highlight 
+				break;
+			}
+		}
+		
+	}
+	
+	
+	private void enterEditMode() {
+	    isEditMode = true;
+	    btnUpdate.setEnabled(true);
+	    btnDelete.setEnabled(true);
+	    btnAdd.setEnabled(false); // optional — para hindi makalito
+	}
+
+	private void exitEditMode() {
+	    isEditMode = false;
+	    selectedAuthorId = -1;
+	    txtAuthor.setText("");
+	    btnUpdate.setEnabled(false);
+	    btnDelete.setEnabled(false);
+	    btnAdd.setEnabled(true);
+	}
+	
+	private void tryExitEditMode() {
+	    if (!isEditMode) return; // wala namang edit mode, wala sa gagawin
+
+	    // hanapin ang original name sa table
+	    String originalName = "";
+	    for (int i = 0; i < tblModel.getRowCount(); i++) {
+	        if ((int) tblModel.getValueAt(i, 0) == selectedAuthorId) {
+	            originalName = (String) tblModel.getValueAt(i, 1);
+	            break;
+	        }
+	    }
+
+	    String currentText = txtAuthor.getText().trim();
+
+	    if (!currentText.equals(originalName)) {
+	        // may binago ang user — mag-prompt
+	        int confirm = JOptionPane.showConfirmDialog(
+	            this,
+	            "Discard changes?",
+	            "Unsaved Changes",
+	            JOptionPane.YES_NO_OPTION
+	        );
+	        if (confirm == JOptionPane.YES_OPTION) {
+	            exitEditMode();
+	            tblAuthor.clearSelection();
+	        }
+	        // kung NO — manatili sa edit mode, walang mangyayari
+	    } else {
+	        // walang binago — exit agad, walang prompt
+	        exitEditMode();
+	        tblAuthor.clearSelection();
+	    }
+	}
+	
+	
 	 
 	public void addAuthor() {
 		String authorName = txtAuthor.getText().trim().replaceAll("\\s+", " ");
@@ -244,7 +335,9 @@ public class AuthorView extends JDialog {
 	        tblModel.addRow(row);
 	    }
 	    
-	    
+	    SwingUtilities.invokeLater(() -> {
+			restoreSelectedRow();
+		});
 	 }catch(RuntimeException e) {
 		JOptionPane.showMessageDialog(this, e.getMessage(), "Database problem", JOptionPane.WARNING_MESSAGE);
 		 return;
@@ -264,17 +357,22 @@ public class AuthorView extends JDialog {
 	    try { 
 	        authorController.editAuthor(selectedAuthorId, editedName);
 	        JOptionPane.showMessageDialog(this, "Successfully Updated");
-	        txtAuthor.setText("");
-	        selectedAuthorId = -1; // i-reset after edit
+	        exitEditMode();
 	        
 	    } catch (IllegalArgumentException e) {
 	        JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 	        return;
-	    }
+	    }catch(RuntimeException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Database problem", JOptionPane.WARNING_MESSAGE);
+			 return;
+		 }
 	}
 	
 	
-	public void deleteAuthor() {	
+	public void deleteAuthor() {
+		int confirm = JOptionPane.showConfirmDialog(this, "Confirm delete category","WARNING",JOptionPane.YES_NO_OPTION);
+		if(confirm != JOptionPane.YES_OPTION) return;
+		
 	    if(selectedAuthorId < 0) {
 	    	JOptionPane.showMessageDialog(this, "Select Author first!", "WARNING", JOptionPane.ERROR_MESSAGE);
 	    	return;
@@ -283,8 +381,8 @@ public class AuthorView extends JDialog {
 		int authorId = selectedAuthorId;
 		authorController.deleteAuthor(authorId);	
 		JOptionPane.showMessageDialog(this, "Successfully Deleted");
-		txtAuthor.setText("");
-		selectedAuthorId = -1;
+		loadAuthor();
+		exitEditMode();
 		}catch(IllegalArgumentException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error yah", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -317,10 +415,23 @@ public class AuthorView extends JDialog {
 	    for (Author a : list) {
 	        tblModel.addRow(new Object[]{a.getAuthorId(), a.getAuthorName()});
 	    }
+	    
+	    SwingUtilities.invokeLater(() -> {
+			restoreSelectedRow();
+		});
+	    
      }catch(Exception e) {
     	 JOptionPane.showMessageDialog(this, e.getMessage());
      } 
-	}
+   }
+	
+	  public String getSelectedAuthorName() {
+	        return selectedAuthorName;
+	    }
+	  
+	  public int getSelectedAuthorId() {
+		    return selectedAuthorId;
+		}
 	
 	
 
