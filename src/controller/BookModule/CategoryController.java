@@ -1,6 +1,7 @@
 package controller.BookModule;
 import java.util.ArrayList;
-import model.Category;
+
+import model.BookModule.Category;
 import services.BookModuleServices.CategoryServices;
 
 public class CategoryController {

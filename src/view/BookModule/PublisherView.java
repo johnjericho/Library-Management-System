@@ -1,6 +1,8 @@
 package view.BookModule;
 
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import model.Publisher;
 import utility.AppContext;
 import utility.TableRefresherHelper;
 
@@ -23,6 +24,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.BookModule.PublisherController;
+import model.BookModule.Publisher;
 
 import javax.swing.JScrollPane;
 import java.awt.Component;
@@ -46,11 +48,11 @@ public class PublisherView extends JDialog {
 	private JTable tblPublisher;
 	private DefaultTableModel tblModel; 
 	private int selectedPublisherId = -1 ;
+	private String selectedPublisherName;
 	private boolean isEditMode = false;
 	
 	private PublisherController publisherController = AppContext.getInstance().getPublisherController();
     
-	private String selectedPublisher;
 
 
 	
@@ -161,6 +163,7 @@ public class PublisherView extends JDialog {
 		
 		TableRefresherHelper.tblRefresher(3000, () ->{ loadPublisher(); });
 
+		//mouse selectionModel for update/delete function
 		tblPublisher.getSelectionModel().addListSelectionListener(e -> {
 		    if (e.getValueIsAdjusting()) return;
 
@@ -178,6 +181,19 @@ public class PublisherView extends JDialog {
 		        }
 		    }
 		});
+		
+		//mouse listenert to Bookmaintenacview
+		 tblPublisher.addMouseListener(new MouseAdapter() {
+		        public void mouseClicked(MouseEvent e) {
+		            if (e.getClickCount() == 2) { // double-click = "pumili ako nito"
+		                int row = tblPublisher.getSelectedRow();
+		                if (row != -1) {
+		                	selectedPublisherName = tblPublisher.getValueAt(row, 1).toString(); // column 1 = author name, halimbawa
+		                    dispose(); // isasara ang dialog → bumabalik na control sa caller
+		                }
+		            }
+		        }
+		    });
 		
 		// ESC key
 				// Sa initAction() — globally nakikinig sa ESC kahit saan naka-focus
@@ -217,8 +233,6 @@ public class PublisherView extends JDialog {
 					restoreSelectedRow();
 				});
 	} 
-	
-	
 	
 
 	private void restoreSelectedRow() {
@@ -375,12 +389,13 @@ public class PublisherView extends JDialog {
       } 
 	 }
 	
-	 public String getSelectedPublisher() {
-		 return selectedPublisher;
-	 }
 	 
 	 public int getSelectedPublisherId() {
 		 return selectedPublisherId;
 	 }
+	 
+		public String getSelectedPublisherName() {
+			return selectedPublisherName;
+		}
 	 
 }

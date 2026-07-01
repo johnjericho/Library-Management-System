@@ -1,3 +1,26 @@
+
+/*
+ * wrapper tawag sa cinall ng method, wlang gaanong logic
+ * todo ayusin ang dao , service , controller layer
+ * gumawa ng class for Book- 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
+
+
+
+
+
+
+
+
+
+
 package view.BookModule;
 
 import javax.swing.JPanel;
@@ -9,7 +32,10 @@ import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JDateChooser;
 
 import controller.BookModule.BookMaintenanceController;
+import model.BookModule.Book;
+import model.BookModule.dto.BookDisplay;
 import utility.AppContext;
+import utility.TableRefresherHelper;
 
 import java.awt.Color;
 import javax.swing.JSeparator;
@@ -18,13 +44,14 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JCheckBox;
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -35,19 +62,17 @@ import java.awt.event.ActionEvent;
 public class BookMaintenanceView extends JPanel {
     private static final long serialVersionUID = 1L;
     private JTable tblBook;
-    private JTextField txtIsbn;
-    private JTextField txtBookName;
-    private JTextField txtAuthor;
-    private JTextField txtPublisher;
-    private JTextField txtCategory;
+    private JTextField txtBookIsbn;
+    private JTextField txtBookTitle;
+    private JTextField txtBookAuthor;
+    private JTextField txtBookPublisher;
+    private JTextField txtBookCategory;
     private JCheckBox chkbxIsbn;
     private JButton btnBrowseAuthor;
     private JButton btnBrowsePublisher;
     private JButton btnBrowseCategory;
-    private JButton btnBrowseContributor;
-    private JComboBox cbContributor;
-    private JSpinner spinReserveCopy;
-    private JDateChooser datePublished;
+    private JSpinner bookReserveCopy;
+    private JDateChooser bookDatePublished;
     private  DefaultTableModel tblModel;
     private  JScrollPane scrollPane;
     private JTextField txtSearch;
@@ -58,8 +83,12 @@ public class BookMaintenanceView extends JPanel {
 	private BookMaintenanceController bookMaintenanceController = AppContext.getInstance().getBookMaintenanceController();
 
 	 private int selectedAuthorId = -1;
+     private int selectedPublisherId = -1;
+     private int selectedCategoryId = -1;
+     private int selectedBookId = -1;
+     private boolean isEditMode = false;
+     private JPanel componentsBorder;
      
-	 
    public BookMaintenanceView() {
 	   initialize();
 	   }    
@@ -82,7 +111,7 @@ public class BookMaintenanceView extends JPanel {
     	
    
         
-        JPanel componentsBorder = new JPanel();
+        componentsBorder = new JPanel();
         componentsBorder.setBorder(new LineBorder(new Color(51, 204, 51), 3, true));
         componentsBorder.setBounds(20, 21, 1083, 252);
         componentsBorder.setLayout(null);
@@ -124,13 +153,13 @@ public class BookMaintenanceView extends JPanel {
         JLabel lblBookTitle_4 = new JLabel("Date published");
         lblBookTitle_4.setForeground(new Color(51, 102, 51));
         lblBookTitle_4.setFont(new Font("Tahoma", Font.BOLD, 17));
-        lblBookTitle_4.setBounds(543, 145, 144, 23);
+        lblBookTitle_4.setBounds(543, 110, 144, 23);
         componentsBorder.add(lblBookTitle_4);
         
         JLabel lblBookTitle_5 = new JLabel("Reserve Copy");
         lblBookTitle_5.setForeground(new Color(51, 102, 51));
         lblBookTitle_5.setFont(new Font("Tahoma", Font.BOLD, 17));
-        lblBookTitle_5.setBounds(553, 177, 126, 20);
+        lblBookTitle_5.setBounds(553, 142, 126, 20);
         componentsBorder.add(lblBookTitle_5);
         
         
@@ -147,10 +176,10 @@ public class BookMaintenanceView extends JPanel {
         
         // Textfields
         
-        txtIsbn = new JTextField();
-        txtIsbn.setBounds(120, 79, 191, 20);
-        componentsBorder.add(txtIsbn);
-        txtIsbn.setColumns(10);
+        txtBookIsbn = new JTextField();
+        txtBookIsbn.setBounds(120, 79, 191, 20);
+        txtBookIsbn.setColumns(10);
+        componentsBorder.add(txtBookIsbn);
         
         chkbxIsbn = new JCheckBox("no isbn");
         chkbxIsbn.setForeground(new Color(51, 102, 51));
@@ -158,41 +187,41 @@ public class BookMaintenanceView extends JPanel {
         chkbxIsbn.setBounds(120, 56, 97, 23);
         componentsBorder.add(chkbxIsbn);
         
-        txtBookName = new JTextField();
-        txtBookName.setColumns(10);
-        txtBookName.setBounds(120, 108, 191, 20);
-        componentsBorder.add(txtBookName);
+        txtBookTitle = new JTextField();
+        txtBookTitle.setColumns(10);
+        txtBookTitle.setBounds(120, 108, 191, 20);
+        componentsBorder.add(txtBookTitle);
         
         
-        txtAuthor = new JTextField();
-        txtAuthor.setColumns(10);
-        txtAuthor.setBounds(120, 139, 191, 20);
-        txtAuthor.setEditable(false);
-        componentsBorder.add(txtAuthor);
+        txtBookAuthor = new JTextField();
+        txtBookAuthor.setColumns(10);
+        txtBookAuthor.setBounds(120, 139, 191, 20);
+        txtBookAuthor.setEditable(false);
+        componentsBorder.add(txtBookAuthor);
         
-        txtPublisher = new JTextField();
-        txtPublisher.setColumns(10);
-        txtPublisher.setBounds(120, 170, 191, 20);
-        //txtPublisher.setEditable(false);
-        componentsBorder.add(txtPublisher);
+        txtBookPublisher = new JTextField();
+        txtBookPublisher.setColumns(10);
+        txtBookPublisher.setBounds(120, 170, 191, 20);
+        txtBookPublisher.setEditable(false);
+        componentsBorder.add(txtBookPublisher);
         
-        txtCategory = new JTextField();
-        txtCategory.setColumns(10);
-        txtCategory.setBounds(685, 85, 191, 20);
-       // txtCategory.setEditable(false);
-        componentsBorder.add(txtCategory);
+        txtBookCategory = new JTextField();
+        txtBookCategory.setColumns(10);
+        txtBookCategory.setBounds(685, 79, 191, 20);
+        txtBookCategory.setEditable(false);
+        componentsBorder.add(txtBookCategory);
         
-        spinReserveCopy = new JSpinner( 
+        bookReserveCopy = new JSpinner( 
         new SpinnerNumberModel(0, 0, 100, 1));
-        spinReserveCopy.setBounds(685, 180, 191, 20);
-        componentsBorder.add(spinReserveCopy);
+        bookReserveCopy.setBounds(685, 139, 191, 20);
+        componentsBorder.add(bookReserveCopy);
         
-        datePublished = new JDateChooser();
-        JTextField textField = (JTextField) datePublished.getDateEditor().getUiComponent();
+        bookDatePublished = new JDateChooser();
+        JTextField textField = (JTextField) bookDatePublished.getDateEditor().getUiComponent();
         textField.setEditable(false);
-        datePublished.setMaxSelectableDate(new Date()); // Hindi pwede pumili ng future date
-        datePublished.setBounds(685, 148, 191, 20);
-        componentsBorder.add(datePublished);
+        bookDatePublished.setMaxSelectableDate(new Date()); // Hindi pwede pumili ng future date
+        bookDatePublished.setBounds(685, 108, 191, 20);
+        componentsBorder.add(bookDatePublished);
         
         //button
         
@@ -213,35 +242,20 @@ public class BookMaintenanceView extends JPanel {
         btnBrowseCategory.setFont(new Font("Tahoma", Font.BOLD, 11));
         btnBrowseCategory.setBounds(886, 84, 80, 20);
         componentsBorder.add(btnBrowseCategory);
-        
-        cbContributor = new JComboBox();
-        cbContributor.setBounds(685, 116, 191, 22);
-        cbContributor.addItem("");
-        cbContributor.addItem("Supplier");
-        cbContributor.addItem("Donor");
-        componentsBorder.add(cbContributor);
-        
-        JLabel lblContributor = new JLabel("Contributor");
-        lblContributor.setForeground(new Color(51, 102, 51));
-        lblContributor.setFont(new Font("Tahoma", Font.BOLD, 17));
-        lblContributor.setBounds(570, 113, 117, 27);
-        componentsBorder.add(lblContributor);
-        
-        btnBrowseContributor = new JButton("browse");
-        btnBrowseContributor.setForeground(new Color(51, 102, 51));
-        btnBrowseContributor.setFont(new Font("Tahoma", Font.BOLD, 11));
-        btnBrowseContributor.setBounds(886, 118, 80, 20);
-        componentsBorder.add(btnBrowseContributor);
             
-        String[] columns = {"Book ID", "ISBN", "Title", "Author", "Publisher", "Category", "Contributor", "Date published", "Reserve copy"};
+        String[] columns = {"Book ID", "ISBN", "Title", "Author", "Publisher", "Category", "Date published", "Reserve copy"};
         tblModel = new DefaultTableModel(columns, 0){
     		public boolean  isCellEditable(int row, int column){ return false; }
  	   };
         tblBook = new JTable(tblModel);
         
         scrollPane = new JScrollPane(tblBook);
-        scrollPane.setBounds(20, 331, 1083, 383);
+        scrollPane.setBounds(20, 329, 1083, 383);
         this.add(scrollPane);
+        
+     	tblBook.getColumnModel().getColumn(0).setMinWidth(0);
+     	tblBook.getColumnModel().getColumn(0).setMaxWidth(0);
+     	tblBook.getColumnModel().getColumn(0).setWidth(0);
         
         txtSearch = new JTextField();
         txtSearch.setBounds(929, 298, 174, 20);
@@ -282,92 +296,372 @@ public class BookMaintenanceView extends JPanel {
     }
     
     public void initActions() {
-    	chkbxIsbn.addActionListener( e ->{
+    	chkbxIsbn.addActionListener( e ->{		
     		if(chkbxIsbn.isSelected()) {
-    			txtIsbn.setText("");
-    			txtIsbn.setEditable(false);
-    		} else txtIsbn.setEditable(true);
+    			txtBookIsbn.setText("");
+    			txtBookIsbn.setEditable(false);
+    		}else if(!chkbxIsbn.isSelected()) {
+    			txtBookIsbn.setEditable(true);
+    			txtBookIsbn.setText("");
+    		}
+    		
     	});
     	
     	btnBrowseAuthor.addActionListener( e -> {
-    		AuthorView author = new AuthorView();
-    		author.setModal(true); // important , need to close the pop window , before accessing ng main window
-    		author.setVisible(true);
+    		
+    		TableRefresherHelper.stopRefresher();
+    		
+    		AuthorView authorView = new AuthorView();
+    		authorView.setModal(true); // important , need to close the pop window , before accessing ng main window
+    		authorView.setVisible(true);
     		
     		  // pagdating dito, ibig sabihin nadispose na si author (may napili o nag-cancel)
-    	    String selectedAuthorName = author.getSelectedAuthorName();
-    	      selectedAuthorId = author.getSelectedAuthorId();
+    	    String selectedAuthorName = authorView.getSelectedAuthorName();
+    	      selectedAuthorId = authorView.getSelectedAuthorId();
     	    if (selectedAuthorName != null) {
-    	        txtAuthor.setText(selectedAuthorName);
-    	    }
+    	        txtBookAuthor.setText(selectedAuthorName);
+    	    }   
+    	    
+    	    TableRefresherHelper.tblRefresher(3000, () ->{ loadBookDisplay(); });
     	});
     	
     	btnBrowsePublisher.addActionListener(e -> {
-    		PublisherView publisher = new PublisherView();
-    		publisher.setModal(true);
-    		publisher.setVisible(true);
+    		TableRefresherHelper.stopRefresher();
+
     		
+    		PublisherView publisherView = new PublisherView();
+    		publisherView.setModal(true);
+    		publisherView.setVisible(true);
+    		
+    		selectedPublisherId = publisherView.getSelectedPublisherId();
+    		String selectedPublisherName = publisherView.getSelectedPublisherName();
+    		if(selectedPublisherName != null) {
+    			txtBookPublisher.setText(selectedPublisherName);
+    		}
+    		
+    	    TableRefresherHelper.tblRefresher(3000, () ->{ loadBookDisplay(); });
     	});
     	
     	btnBrowseCategory.addActionListener(e ->{
-           CategoryView category = new CategoryView();
-           category.setModal(true);
-           category.setVisible(true);
+    		TableRefresherHelper.stopRefresher();
+
+           CategoryView categoryView = new CategoryView();
+           categoryView.setModal(true);
+           categoryView.setVisible(true);
+           
+           selectedCategoryId = categoryView.getSelectedCategoryId();
+          String selectedCategoryName = categoryView.getSelectedCategoryName();
+           if(selectedCategoryName != null) {
+        	   txtBookCategory.setText(selectedCategoryName);
+           }
+   	    TableRefresherHelper.tblRefresher(3000, () ->{ loadBookDisplay(); });
+
     	});
     	
-    	btnBrowseContributor.addActionListener( e ->{
-    		if(cbContributor.getSelectedItem().equals("Supplier")) {
-        		SupplierView supplier = new SupplierView();
-        		supplier.setModal(true);
-        		supplier.setVisible(true);
-    		}
-    		if(cbContributor.getSelectedItem().equals("Donor")) {
-        		DonorView donor = new DonorView();
-                donor.setModal(true);
-        		donor.setVisible(true);
-    		}
-    	});
     	
     	//CRUD
     	
     	btnAdd.addActionListener(e -> {
-;
+    		addBook();
     	});
+    	
+    	loadBookDisplay();
+    	
+    	TableRefresherHelper.tblRefresher(3000, () -> {loadBookDisplay();
+    	});
+    	
+    	
+    	tblBook.getSelectionModel().addListSelectionListener(e ->{
+    		if(e.getValueIsAdjusting()) return; //mouse is long press
+    		int selectedRow = tblBook.getSelectedRow();
+    		
+    		if(selectedRow != -1) {
+    			
+    			int id = (int) tblModel.getValueAt(selectedRow, 0);
+    			
+    			String isbn = (String) tblModel.getValueAt(selectedRow, 1);
+    			String title = (String) tblModel.getValueAt(selectedRow, 2);
+    			String author = (String) tblModel.getValueAt(selectedRow, 3);
+    			String publisher = (String) tblModel.getValueAt(selectedRow, 4);
+    			String category = (String) tblModel.getValueAt(selectedRow, 5);
+                Date DatePublished = (Date) tblModel.getValueAt(selectedRow, 6);
+                int bookReserve = (int) tblModel.getValueAt(selectedRow, 7);
+
+    			
+    			if(id != selectedBookId) {
+    				selectedBookId = id;
+    				
+    				//for user view
+    				txtBookIsbn.setText(isbn);
+        			txtBookTitle.setText(title);
+        			txtBookAuthor.setText(author);
+        			txtBookPublisher.setText(publisher);
+        			txtBookCategory.setText(category);
+        			bookDatePublished.setDate(DatePublished);
+        			bookReserveCopy.setValue(bookReserve);
+        			
+        			//for dev view
+        			Book book = bookMaintenanceController.getBookById(selectedBookId);
+        			selectedAuthorId = book.getAuthorId();
+        			selectedPublisherId = book.getPublisherId();
+        			selectedCategoryId = book.getCategoryId();  
+        			
+        			if(txtBookIsbn.getText().equals("-")) {
+        			    chkbxIsbn.setSelected(true);
+        			    txtBookIsbn.setEditable(false);
+        			}else{
+        			    chkbxIsbn.setSelected(false);
+        			    txtBookIsbn.setEditable(true);
+        			}
+        			
+        			enterEditMode();
+    			}
+    			
+
+    		}
+    	});
+    	
+    	// ESC key
+    	// Sa initAction() — naka-scoped sa loob ng BookMaintenanceView panel lang
+    	this.getInputMap(javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+    	    .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escapeAction");
+
+    	this.getActionMap().put("escapeAction", new javax.swing.AbstractAction() {
+    	    public void actionPerformed(java.awt.event.ActionEvent e) {
+    	    	 tryExitEditMode();    	    }
+    	});
+
+    	// Empty area click
+    	this.addMouseListener(new java.awt.event.MouseAdapter() {
+    	    public void mouseClicked(java.awt.event.MouseEvent e) {
+    	    	 tryExitEditMode();	    }
+    	});
+    	
+    	btnUpdate.addActionListener(e ->{
+    		updateBook();
+    	});
+    
+    	btnDelete.addActionListener(e ->{
+    		deleteBook();
+    	});
+    	
+    	txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+    	    public void insertUpdate(javax.swing.event.DocumentEvent e) { searchBook(); }
+    	    public void removeUpdate(javax.swing.event.DocumentEvent e) { searchBook(); }
+    	    public void changedUpdate(javax.swing.event.DocumentEvent e) { searchBook(); }
+    	});
+    	
     }
     
+       private void restoreSelectedRow() {
+    	  if(selectedBookId == -1) return;
+    	  
+    	  for(int i = 0; i < tblModel.getRowCount(); i++) {
+    		  int rowId = (int) tblModel.getValueAt(i, 0);
+    		  if(rowId == selectedBookId) {
+    			  tblBook.setRowSelectionInterval(i, i);
+    			  break;
+    		  }
+    	  } 	  
+       }
+       
+       private void enterEditMode() {
+    	       isEditMode = true;
+    		   btnAdd.setEnabled(false);
+    		   btnUpdate.setEnabled(true);
+    		   btnDelete.setEnabled(true);
+       }
+       
+       private void exitEditMode() {
+    	   isEditMode = false;
+		   btnAdd.setEnabled(true);
+		   btnUpdate.setEnabled(false);
+		   btnDelete.setEnabled(false);
+		   
+		   txtBookIsbn.setText("");
+		   txtBookTitle.setText("");
+		   txtBookAuthor.setText("");
+		   txtBookPublisher.setText("");
+		   txtBookCategory.setText("");
+		   bookDatePublished.setDate(null);
+		   bookReserveCopy.setValue(0);
+		   
+		   chkbxIsbn.setSelected(false);
+		   selectedBookId = -1;
+		   selectedAuthorId = -1;
+		   selectedPublisherId = -1;
+		   selectedCategoryId = -1;
+       }
+       
+       
+       private boolean hasChanges() {
+    	    String originalIsbn = "";
+    	    String originalTitle = "";
+    	    String originalAuthor = "";
+    	    String originalPublisher = "";
+    	    String originalCategory = "";
+    	    Date originalDate = null;
+    	    int originalReserve = 0;
+
+    	    for (int i = 0; i < tblModel.getRowCount(); i++) {
+    	        if ((int) tblModel.getValueAt(i, 0) == selectedBookId) {
+    	            originalIsbn = (String) tblModel.getValueAt(i, 1);
+    	            originalTitle = (String) tblModel.getValueAt(i, 2);
+    	            originalAuthor = (String) tblModel.getValueAt(i, 3);
+    	            originalPublisher = (String) tblModel.getValueAt(i, 4);
+    	            originalCategory = (String) tblModel.getValueAt(i, 5);
+    	            originalDate = (Date) tblModel.getValueAt(i, 6);
+    	            originalReserve = (int) tblModel.getValueAt(i, 7);
+    	            break;
+    	        }
+    	    }
+
+    	    return !txtBookIsbn.getText().trim().equals(originalIsbn) ||
+    	           !txtBookTitle.getText().trim().equals(originalTitle) ||
+    	           !txtBookAuthor.getText().trim().equals(originalAuthor) ||
+    	           !txtBookPublisher.getText().trim().equals(originalPublisher) ||
+    	           !txtBookCategory.getText().trim().equals(originalCategory) ||
+    	           (bookDatePublished.getDate() != null && !bookDatePublished.getDate().equals(originalDate)) ||
+    	           (Integer) bookReserveCopy.getValue() != originalReserve;
+    	}
+       
+       private void tryExitEditMode() {
+    	    if (!isEditMode) return;
+
+    	    if (hasChanges()) {
+    	        int confirm = JOptionPane.showConfirmDialog(
+    	            this, "Discard changes?", "Unsaved Changes", JOptionPane.YES_NO_OPTION
+    	        );
+    	        if (confirm == JOptionPane.YES_OPTION) {
+    	            exitEditMode();
+    	            tblBook.clearSelection();
+    	        }
+    	    } else {
+    	        exitEditMode();
+    	        tblBook.clearSelection();
+    	    }
+    	}
+       
     
     public void addBook() {
-    	String isbn = txtIsbn.getText();
-    	String title = txtBookName.getText();
-    //	String author = txtAuthor.getText();
-    	String publisher = txtPublisher.getText();
-    	String category = txtCategory.getText();
-    	String contributor = cbContributor.getSelectedItem().toString();
-    	Date date = datePublished.getDate();
-    	int reserve = (Integer) spinReserveCopy.getValue();
+    	String isbn = txtBookIsbn.getText();
+    	String title = txtBookTitle.getText();
+    	int author = selectedAuthorId;
+    	int publisher = selectedPublisherId;
+    	int category = selectedCategoryId;
+    	Date date = bookDatePublished.getDate();
+    	int reserve = (Integer) bookReserveCopy.getValue();
     	
     	try {
-    	bookMaintenanceController.addBook(isbn, title, selectedAuthorId, publisher, category, contributor, date, reserve);
+    	bookMaintenanceController.addBook(isbn, title, author, publisher, category, date, reserve);
     	JOptionPane.showMessageDialog(this, "Succesfully added!");
-    	txtIsbn.setText("");
-    	txtBookName.setText("");
-    	txtAuthor.setText("");
-    	txtPublisher.setText("");
-    	txtCategory.setText("");
-   // 	txtIsbn.setText("");
-    //	datePublished.setText("");
-    //	spinReserveCopy.setText("");
+    	loadBookDisplay();
+    	exitEditMode();
     	}catch(Exception e) {
     		JOptionPane.showMessageDialog(this, e.getMessage(), " Warning", JOptionPane.WARNING_MESSAGE);
     	}
 
     }
+
     
-    public void loadBook() {
+    
+    private void loadBookDisplay() {
+    	try {
+        tblModel.setRowCount(0);
+        ArrayList<BookDisplay> bookList = bookMaintenanceController.loadBookForDisplay();
+
+        for (BookDisplay book : bookList) {
+        Object[] row = {
+	                    book.getBookId(),
+	                    book.getBookIsbn(),
+	                    book.getBookTitle(),
+	                    book.getBookAuthor(),
+	                    book.getBookPublisher(),
+	                    book.getBookCategory(),
+	                    book.getBookDatePublished(),
+	                    book.getBookReserveCopy()
+         		};	
+        	tblModel.addRow(row);
+        	
+        	SwingUtilities.invokeLater(() -> {
+    			restoreSelectedRow();
+    		});
+        }
+    	}catch(Exception e) {
+    		JOptionPane.showMessageDialog(this, e.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    }
+    
+    public void updateBook() {
     	
+        if (!hasChanges()) {
+            JOptionPane.showMessageDialog(this, "No changes detected.");
+            return;
+        }
+    	
+        String isbn = txtBookIsbn.getText();
+        String title = txtBookTitle.getText();
+        int author = selectedAuthorId;
+        int publisher = selectedPublisherId;
+        int category = selectedCategoryId;
+        Date date = bookDatePublished.getDate();
+        int reserve = (Integer) bookReserveCopy.getValue();
+        int bookId = selectedBookId;
+
+        try {
+            bookMaintenanceController.updateBook(bookId, isbn, title, author, publisher, category, date, reserve);
+            JOptionPane.showMessageDialog(this, "Successfully updated!");
+            loadBookDisplay();
+            exitEditMode();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
+    public void deleteBook() {
+    	int selectedRow = selectedBookId;
+    	try {
+    	bookMaintenanceController.deleteBook(selectedRow);
+    	JOptionPane.showMessageDialog(this, "Successfully deleted!");
+    	exitEditMode();
+    	}catch(Exception e) {
+    		JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.ERROR_MESSAGE);
+    	}
     }
     
     
-    
+    private void searchBook() {
+        try {
+            String keyword = txtSearch.getText().trim();
+            tblModel.setRowCount(0);
+            
+    		if(!keyword.isEmpty()) {
+    			TableRefresherHelper.stopRefresher();
+    		}else { TableRefresherHelper.startRefresher(); }
+
+            ArrayList<BookDisplay> bookList = keyword.isEmpty()
+                    ? bookMaintenanceController.loadBookForDisplay()
+                    : bookMaintenanceController.searchBook(keyword);
+
+            for (BookDisplay book : bookList) {
+                Object[] row = {
+                        book.getBookId(),
+                        book.getBookIsbn(),
+                        book.getBookTitle(),
+                        book.getBookAuthor(),
+                        book.getBookPublisher(),
+                        book.getBookCategory(),
+                        book.getBookDatePublished(),
+                        book.getBookReserveCopy()
+                };
+                tblModel.addRow(row);
+            }
+
+            SwingUtilities.invokeLater(this::restoreSelectedRow);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
 }

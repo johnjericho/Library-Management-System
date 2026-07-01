@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.BookModuleDAO.PublisherDAO;
-import model.Publisher;
+import model.BookModule.Publisher;
 
 public class PublisherServices {
 	

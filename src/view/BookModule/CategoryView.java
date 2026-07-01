@@ -1,5 +1,4 @@
 package view.BookModule;
-import model.Category;
 import utility.AppContext;
 import utility.TableRefresherHelper;
 
@@ -14,11 +13,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.BookModule.CategoryController;
+import model.BookModule.Category;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JTextField;
@@ -44,13 +46,13 @@ public class CategoryView extends JDialog {
 	private CategoryController categoryController = AppContext.getInstance().getCategoryController();
 	
 	private int selectedCategoryId = -1;
+	private String selectedCategoryName;
 	private boolean isEditMode = false; // dagdag na field sa taas kasama ng selectedCategoryId
 
 
 	public CategoryView() {
 		
-		execute();
-		
+		execute();	
 	}
 	
 	public void execute() {
@@ -152,6 +154,7 @@ public class CategoryView extends JDialog {
 		TableRefresherHelper.tblRefresher(3000, () ->{ loadCategory(); });
 		
 		
+		//mouse selectionModel for update/delete function
 		tblCategory.getSelectionModel().addListSelectionListener(e -> {
 		    if (e.getValueIsAdjusting()) return;
 
@@ -169,6 +172,19 @@ public class CategoryView extends JDialog {
 		        }
 		    }
 		});
+		
+		//mouse listenert to Bookmaintenacview
+		 tblCategory.addMouseListener(new MouseAdapter() {
+		        public void mouseClicked(MouseEvent e) {
+		            if (e.getClickCount() == 2) { // double-click = "pumili ako nito"
+		                int row = tblCategory.getSelectedRow();
+		                if (row != -1) {
+		                    selectedCategoryName = tblCategory.getValueAt(row, 1).toString(); // column 1 = author name, halimbawa
+		                    dispose(); // isasara ang dialog → bumabalik na control sa caller
+		                }
+		            }
+		        }
+		    });
 		
 		// ESC key
 		// Sa initAction() — globally nakikinig sa ESC kahit saan naka-focus
@@ -366,6 +382,14 @@ public class CategoryView extends JDialog {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 		
+	}
+	
+	public int getSelectedCategoryId() {
+		return selectedCategoryId;
+	}
+	
+	public String getSelectedCategoryName() {
+		return selectedCategoryName;
 	}
 	
 	

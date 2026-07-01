@@ -3,7 +3,7 @@ package services.BookModuleServices;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.BookModuleDAO.SupplierDAO;
-import model.Supplier;
+import model.BookModule.Supplier;
 
 public class SupplierServices {
     private SupplierDAO supplierDao;

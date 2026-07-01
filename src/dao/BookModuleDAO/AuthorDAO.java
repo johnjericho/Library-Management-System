@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import model.Author;
 
+import model.BookModule.Author;
 import utility.DatabaseHelper;
 
 public class AuthorDAO {

@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import model.BookModule.Category;
 import utility.DatabaseHelper;
-import model.Category;
 
 public class CategoryDAO {
 	
@@ -33,7 +33,7 @@ public class CategoryDAO {
        {
 		
 		if(rs.next()) {
-			return rs.getInt(1) > 0;
+			return rs.getInt(1) > 0; // getInt(1) column 1 na ibinagy ni resultSet isang column lang ang rinereturn at bibilangin ang row
 		}
        }
 	 }	
@@ -105,6 +105,7 @@ public class CategoryDAO {
 	}
 	
 	
+
 	
 	
 	

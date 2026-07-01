@@ -1,10 +1,11 @@
 package dao.BookModuleDAO;
 
-import model.Donor;
 import utility.DatabaseHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
+
+import model.BookModule.Donor;
 
 public class DonorDAO {
 

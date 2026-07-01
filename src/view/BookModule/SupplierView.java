@@ -11,7 +11,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.BookModule.SupplierController;
-import model.Supplier;
+import model.BookModule.Supplier;
 import utility.AppContext;
 import utility.TableRefresherHelper;
 

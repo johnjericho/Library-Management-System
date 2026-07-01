@@ -1,4 +1,4 @@
-package model;
+package model.BookModule;
 
 public class Category {
 	
@@ -7,6 +7,7 @@ public class Category {
 
       public Category() {   }
 	
+     //overloading constructor specificallly in category seach text
 	public Category(int categoryId,String categoryName) {
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;

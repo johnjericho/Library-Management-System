@@ -9,6 +9,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.BookModule.AuthorController;
+import model.BookModule.Author;
 
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -27,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JSeparator;
 
-import model.Author;
 import utility.AppContext;
 import utility.TableRefresherHelper;
 
@@ -165,7 +165,8 @@ public class AuthorView extends JDialog {
 			}); 
 		
 		TableRefresherHelper.tblRefresher(3000, () ->{ loadAuthor(); });
-
+		
+		//mouse selectionModel for update/delete function
 		tblAuthor.getSelectionModel().addListSelectionListener(e -> {
 		    if (e.getValueIsAdjusting()) return;
 
@@ -183,6 +184,19 @@ public class AuthorView extends JDialog {
 		        }
 		    }
 		});
+		
+		//mouse listenert to Bookmaintenacview
+		 tblAuthor.addMouseListener(new MouseAdapter() {
+		        public void mouseClicked(MouseEvent e) {
+		            if (e.getClickCount() == 2) { // double-click = "pumili ako nito"
+		                int row = tblAuthor.getSelectedRow();
+		                if (row != -1) {
+		                    selectedAuthorName = tblAuthor.getValueAt(row, 1).toString(); // column 1 = author name, halimbawa
+		                    dispose(); // isasara ang dialog → bumabalik na control sa caller
+		                }
+		            }
+		        }
+		    });
 		
 		//ESC
 		getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -219,18 +233,6 @@ public class AuthorView extends JDialog {
 		    public void changedUpdate(DocumentEvent e) { searchAuthor(); }
 		});
 		
-
-		 tblAuthor.addMouseListener(new MouseAdapter() {
-		        public void mouseClicked(MouseEvent e) {
-		            if (e.getClickCount() == 2) { // double-click = "pumili ako nito"
-		                int row = tblAuthor.getSelectedRow();
-		                if (row != -1) {
-		                    selectedAuthorName = tblAuthor.getValueAt(row, 1).toString(); // column 1 = author name, halimbawa
-		                    dispose(); // isasara ang dialog → bumabalik na control sa caller
-		                }
-		            }
-		        }
-		    });
 		
 		SwingUtilities.invokeLater(() -> {
 			restoreSelectedRow();

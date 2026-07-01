@@ -1,7 +1,7 @@
 package controller.BookModule;
 import java.util.ArrayList;
 
-import model.Publisher;
+import model.BookModule.Publisher;
 import services.BookModuleServices.PublisherServices;
 public class PublisherController {
     

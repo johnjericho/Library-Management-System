@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.BookModuleDAO.AuthorDAO;
-import model.Author;
+import model.BookModule.Author;
 
 public class AuthorServices {
 	

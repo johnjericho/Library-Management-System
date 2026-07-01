@@ -6,8 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
-import model.Publisher;
+import model.BookModule.Publisher;
 import utility.DatabaseHelper;
 
 public class PublisherDAO {

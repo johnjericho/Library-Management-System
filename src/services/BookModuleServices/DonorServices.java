@@ -3,7 +3,7 @@ package services.BookModuleServices;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.BookModuleDAO.DonorDAO;
-import model.Donor;
+import model.BookModule.Donor;
 
 public class DonorServices {
     private DonorDAO donorDao;

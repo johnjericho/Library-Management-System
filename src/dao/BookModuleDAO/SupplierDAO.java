@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import model.Supplier;
+import model.BookModule.Supplier;
 import utility.DatabaseHelper;
 
 public class SupplierDAO {

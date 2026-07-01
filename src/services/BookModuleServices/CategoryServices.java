@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.BookModuleDAO.CategoryDAO;
-import model.Category;
+import model.BookModule.Category;
 
 public class CategoryServices {
 

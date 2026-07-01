@@ -47,7 +47,7 @@ public class Main {
 			    ctx.setCategoryController(new CategoryController(new CategoryServices(new CategoryDAO())));	
 			    ctx.setSupplierController(new SupplierController(new SupplierServices(new SupplierDAO())));
 			    ctx.setDonorController(new DonorController(new DonorServices(new DonorDAO())));
-			    ctx.setBookMaintenanceController(new BookMaintenanceController(new BookMaintenanceServices()));
+			    ctx.setBookMaintenanceController(new BookMaintenanceController(new BookMaintenanceServices(new BookMaintenanceDAO())));
 				
 				
 				LogIn login = new LogIn();
