@@ -1,8 +1,9 @@
-package services.BookModuleServices;
+package services.AcquisitionModuleServices;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import dao.BookModuleDAO.DonorDAO;
+
+import dao.AcquisitionModuleDAO.DonorDAO;
 import model.BookModule.Donor;
 
 public class DonorServices {
@@ -12,22 +13,22 @@ public class DonorServices {
         this.donorDao = donorDao;
     }
 
-    public void addDonor(String donorName, String donorNumber) {
+    public void addDonor(String donorName,String contactPer, String donorNo, String donorAddress) {
         donorName = donorName.trim().replaceAll("\\s+", " ");
         donorName = capitalizeWords(donorName);
-        donorNumber = donorNumber.trim().replaceAll("\\s+", " ");
+        donorNo = donorNo.trim().replaceAll("\\s+", " ");
         if(donorName.length() > 255) throw new IllegalArgumentException("Donor is too long! Max 255 characters!");
 
         if (donorName.isEmpty()) throw new IllegalArgumentException("Donor Cannot be empty!");
-        if (donorNumber.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
+        if (donorNo.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
         
-        if(!donorNumber.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
-        if(donorNumber.length() > 11 || donorNumber.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
+        if(!donorNo.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
+        if(donorNo.length() > 11 || donorNo.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
 
-        if (isExisting(donorName, donorNumber)) throw new IllegalArgumentException("Donor already exist!");
+        if (isExisting(donorName, donorNo)) throw new IllegalArgumentException("Donor already exist!");
        
         try {
-            donorDao.addDonor(donorName, donorNumber);
+            donorDao.addDonor(donorName, contactPer,  donorNo, donorAddress);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database connection error!");
@@ -53,25 +54,25 @@ public class DonorServices {
         }
     }
 
-    public void updateDonor(int donorId, String donorName, String donorNumber) {
+    public void updateDonor(int donorId, String donorName,String contacPer, String donorNo, String donorAddress) {
         donorName = donorName.trim().replaceAll("\\s+", " ");
         donorName = capitalizeWords(donorName);
-        donorNumber = donorNumber.trim().replaceAll("\\s+", " ");
-        donorNumber = capitalizeWords(donorNumber);
+        donorNo = donorNo.trim().replaceAll("\\s+", " ");
+        donorNo = capitalizeWords(donorNo);
 
         if (donorId < 0) throw new IllegalArgumentException("Select donor first!");
         if (donorName.isEmpty()) throw new IllegalArgumentException("Donor Cannot be empty!");
-        if (donorNumber.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
+        if (donorNo.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
         if(donorName.length() > 255) throw new IllegalArgumentException("Donor is too long! Max 255 characters!");
 
-        if(!donorNumber.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
-        if(donorNumber.length() > 11 || donorNumber.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
+        if(!donorNo.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
+        if(donorNo.length() > 11 || donorNo.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
         
-        if (isExisting(donorName, donorNumber)) throw new IllegalArgumentException("Donor already exist");
+        if (isExisting(donorName, donorNo)) throw new IllegalArgumentException("Donor already exist");
        
 
         try {
-            donorDao.updateDonor(donorId, donorName, donorNumber);
+            donorDao.updateDonor(donorId, donorName, donorNo);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database Connection error!");

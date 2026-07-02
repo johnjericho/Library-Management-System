@@ -1,4 +1,4 @@
-package dao.BookModuleDAO;
+package dao.AcquisitionModuleDAO;
 
 import utility.DatabaseHelper;
 
@@ -10,32 +10,36 @@ import model.BookModule.Donor;
 public class DonorDAO {
 
     // CREATE / INSERT
-    public void addDonor(String donorName, String donorNumber) throws SQLException {
+    public void addDonor(String donorName, String contactPer, String donorNo, String donorAddress) throws SQLException {
 
         String sql = "INSERT INTO tbl_donor "
-                   + "(donorName, donorNumber) "
-                   + "VALUES (?, ?)";
+                   + "(donorName, donorContactPer, donorNo, donorAddress ) "
+                   + "VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, donorName);
-            stmt.setString(2, donorNumber);
+            stmt.setString(2, contactPer);
+            stmt.setString(3, donorNo);
+            stmt.setString(4, donorAddress);
+
+
 
             stmt.executeUpdate();
         }
     }
 
-	public boolean isExisting(String DonorName, String DonorNumber) throws SQLException {
+	public boolean isExisting(String DonorName, String DonorNo) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM tbl_Donor "
 				+ "WHERE LOWER(DonorName) = LOWER(?) "
-				+ "AND DonorNumber = ?";
+				+ "AND donorNo = ?";
 	try(	
 		Connection conn = DatabaseHelper.getConnection();
 		PreparedStatement stmt = conn.prepareStatement(sql))
 	{
 	    stmt.setString(1, DonorName);	
-	    stmt.setString(2, DonorNumber);	
+	    stmt.setString(2, DonorNo);	
 	    
        try( ResultSet rs = stmt.executeQuery())
        {
@@ -65,7 +69,10 @@ public class DonorDAO {
 
                 donor.setDonorId(rs.getInt("donorId"));
                 donor.setDonorName(rs.getString("donorName"));
-                donor.setDonorNumber(rs.getString("donorNumber"));
+                donor.setDonorContactPerson(rs.getString("donorContactper"));
+                donor.setDonorNumber(rs.getString("donorNo"));
+                donor.setDonorAddress(rs.getString("donorAddress"));
+
 
                 donors.add(donor);
             }
@@ -78,7 +85,7 @@ public class DonorDAO {
     public void updateDonor(int donorId, String donorName, String donorNumber) throws SQLException {
 
         String sql = "UPDATE tbl_donor "
-                   + "SET donorName = ?, donorNumber = ? "
+                   + "SET donorName = ?, donorNo = ? "
                    + "WHERE donorId = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
@@ -113,7 +120,7 @@ public class DonorDAO {
 
         String sql = "SELECT * FROM tbl_donor "
                    + "WHERE LOWER(donorName) LIKE LOWER(?) "
-                   + "OR donorNumber LIKE ?";
+                   + "OR donorNo LIKE ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -128,7 +135,7 @@ public class DonorDAO {
                     Donor donor = new Donor(
                             rs.getInt("donorId"),
                             rs.getString("donorName"),
-                            rs.getString("donorNumber")
+                            rs.getString("donorNo")
                     );
 
                     donors.add(donor);

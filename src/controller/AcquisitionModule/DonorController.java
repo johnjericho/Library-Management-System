@@ -1,9 +1,9 @@
-package controller.BookModule;
+package controller.AcquisitionModule;
 
 import java.util.ArrayList;
 
 import model.BookModule.Donor;
-import services.BookModuleServices.DonorServices;
+import services.AcquisitionModuleServices.DonorServices;
 
 public class DonorController {
     private DonorServices donorServices;
@@ -12,8 +12,8 @@ public class DonorController {
         this.donorServices = donorServices;
     }
 
-    public void addDonor(String donorName, String donorNumber) {
-        donorServices.addDonor(donorName, donorNumber);
+    public void addDonor(String donorName,String contacPer, String donorNo, String donorAddress) {
+        donorServices.addDonor(donorName,contacPer, donorNo, donorAddress);
     }
 
     public boolean isExisting(String donorName, String donorNumber) {
@@ -24,8 +24,8 @@ public class DonorController {
         return donorServices.loadDonor();
     }
 
-    public void updateDonor(int donorId, String donorName, String donorNumber) {
-        donorServices.updateDonor(donorId, donorName, donorNumber);
+    public void updateDonor(int donorId, String donorName, String donorContactPer, String donorNo, String donorAddress) {
+        donorServices.updateDonor(donorId,donorContactPer, donorName, donorNo, donorAddress);
     }
 
     public void deleteDonor(int donorId) {

@@ -5,8 +5,11 @@ public class Donor {
     private int donorId;
     private String donorName;
     private String donorNumber;
+    private String donorContactPerson;
+    private String donorAddress;
 
-    public Donor() { }
+
+	public Donor() { }
 
     public Donor(int donorId, String donorName, String donorNumber) {
         this.donorId = donorId;
@@ -41,4 +44,26 @@ public class Donor {
     public void setDonorNumber(String donorNumber) {
         this.donorNumber = donorNumber;
     }
+    
+    // ============================================
+    
+    public String getDonorContactPerson() {
+		return donorContactPerson;
+	}
+
+	public String getDonorAddress() {
+		return donorAddress;
+	}
+
+    // ============================================
+
+	
+	public void setDonorContactPerson(String donorContactPerson) {
+		this.donorContactPerson = donorContactPerson;
+	}
+
+	public void setDonorAddress(String donorAddress) {
+		this.donorAddress = donorAddress;
+	}
+    
 }

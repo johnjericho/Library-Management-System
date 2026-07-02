@@ -2,24 +2,24 @@ package main;
 
 import java.awt.EventQueue;
 
+import controller.AcquisitionModule.DonorController;
+import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
 import controller.BookModule.BookMaintenanceController;
 import controller.BookModule.CategoryController;
-import controller.BookModule.DonorController;
 import controller.BookModule.PublisherController;
-import controller.BookModule.SupplierController;
+import dao.AcquisitionModuleDAO.DonorDAO;
+import dao.AcquisitionModuleDAO.SupplierDAO;
 import dao.BookModuleDAO.AuthorDAO;
 import dao.BookModuleDAO.BookMaintenanceDAO;
 import dao.BookModuleDAO.CategoryDAO;
-import dao.BookModuleDAO.DonorDAO;
 import dao.BookModuleDAO.PublisherDAO;
-import dao.BookModuleDAO.SupplierDAO;
+import services.AcquisitionModuleServices.DonorServices;
+import services.AcquisitionModuleServices.SupplierServices;
 import services.BookModuleServices.AuthorServices;
 import services.BookModuleServices.BookMaintenanceServices;
 import services.BookModuleServices.CategoryServices;
-import services.BookModuleServices.DonorServices;
 import services.BookModuleServices.PublisherServices;
-import services.BookModuleServices.SupplierServices;
 import view.LogIn;
 import utility.AppContext;
 

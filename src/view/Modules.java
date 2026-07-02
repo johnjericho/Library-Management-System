@@ -2,7 +2,9 @@ package view;
 
 import javax.swing.JPanel;
 
+import view.AcquisitionModule.AcquisitionView;
 import view.BookModule.BookMaintenanceView;
+import view.InventoryModule.InventoryView;
 import view.UserModule.UserMaintenanceView;
 
 import javax.swing.JButton;
@@ -18,12 +20,13 @@ public class Modules extends JPanel {
     private static final long serialVersionUID = 1L;
     private JButton btnDashboard;
     private JButton btnFileMaintenance;
-    private JButton btnInventory;
+    private JButton btnCirculation;
 
     // BINAGO: AdminDash → MainFrame na ang reference
     private MainFrame mainFrame;
-    private JButton btnInventory_1;
+    private JButton btnInventory;
     private JButton btnUserMaintenance;
+    private JButton btnAquition;
    
 
     
@@ -60,20 +63,25 @@ public class Modules extends JPanel {
         btnFileMaintenance.setBounds(21, 314, 200, 30);
         add(btnFileMaintenance);
 
-        btnInventory = new JButton("CIRCULATION");
-        btnInventory.setFont(new Font("Tahoma", Font.BOLD, 13));
-        btnInventory.setBounds(20, 273, 200, 30);
-        add(btnInventory);
+        btnCirculation = new JButton("CIRCULATION");
+        btnCirculation.setFont(new Font("Tahoma", Font.BOLD, 13));
+        btnCirculation.setBounds(20, 273, 200, 30);
+        add(btnCirculation);
         
-        btnInventory_1 = new JButton("INVENTORY");
-        btnInventory_1.setFont(new Font("Tahoma", Font.BOLD, 13));
-        btnInventory_1.setBounds(20, 396, 200, 30);
-        add(btnInventory_1);
+        btnInventory = new JButton("BOOK INVENTORY");
+        btnInventory.setFont(new Font("Tahoma", Font.BOLD, 13));
+        btnInventory.setBounds(21, 437, 200, 30);
+        add(btnInventory);
         
         btnUserMaintenance = new JButton("USER MAINTENANCE");
         btnUserMaintenance.setFont(new Font("Tahoma", Font.BOLD, 13));
-        btnUserMaintenance.setBounds(21, 355, 200, 30);
+        btnUserMaintenance.setBounds(20, 396, 200, 30);
         add(btnUserMaintenance);
+        
+        btnAquition = new JButton("ACQUISITION");
+        btnAquition.setFont(new Font("Tahoma", Font.BOLD, 13));
+        btnAquition.setBounds(20, 355, 200, 30);
+        add(btnAquition);
     }
 
     public void initAction() {
@@ -84,10 +92,16 @@ public class Modules extends JPanel {
         btnFileMaintenance.addActionListener(e ->
             mainFrame.showPanel(new BookMaintenanceView()));
         
+        btnAquition.addActionListener(e ->{
+        	mainFrame.showPanel(new AcquisitionView());
+        });
+        
         btnUserMaintenance.addActionListener( e -> {
         	mainFrame.showPanel(new UserMaintenanceView());
         });
 
-        
+        btnInventory.addActionListener(e ->{
+        	mainFrame.showPanel(new InventoryView());
+        });        
     }
 }

@@ -6,7 +6,7 @@ import java.util.Date;
 
 import dao.BookModuleDAO.BookMaintenanceDAO;
 import model.BookModule.Book;
-import model.BookModule.dto.BookDisplay;
+import model.dto.BookDisplay;
 
 public class BookMaintenanceServices {
 	

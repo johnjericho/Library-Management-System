@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import model.BookModule.Book;
-import model.BookModule.dto.BookDisplay;
+import model.dto.BookDisplay;
 import services.BookModuleServices.BookMaintenanceServices;
 
 public class BookMaintenanceController {

@@ -1,9 +1,9 @@
-package controller.BookModule;
+package controller.AcquisitionModule;
 
 import java.util.ArrayList;
 
 import model.BookModule.Supplier;
-import services.BookModuleServices.SupplierServices;
+import services.AcquisitionModuleServices.SupplierServices;
 
 public class SupplierController {
     private SupplierServices supplierServices;
@@ -12,8 +12,8 @@ public class SupplierController {
         this.supplierServices = supplierServices;
     }
 
-    public void addSupplier(String supplierName, String supplierNumber) {
-        supplierServices.addSupplier(supplierName, supplierNumber);
+    public void addSupplier(String donorType, String supplierName, String contactPerson ,String contactNo, String supplierAddress) {
+        supplierServices.addSupplier(donorType, supplierName, contactPerson, contactNo, supplierAddress);
     }
 
     public boolean isExisting(String supplierName, String supplierNumber) {
@@ -24,8 +24,8 @@ public class SupplierController {
         return supplierServices.loadSupplier();
     }
 
-    public void updateSupplier(int supplierId, String supplierName, String supplierNumber) {
-        supplierServices.updateSupplier(supplierId, supplierName, supplierNumber);
+    public void updateSupplier(int supplierId, String supplierName, String contactPerson, String contactNo, String supplierAddress) {
+        supplierServices.updateSupplier(supplierId, supplierName,contactPerson, contactNo ,supplierAddress );
     }
 
     public void deleteSupplier(int supplierId) {

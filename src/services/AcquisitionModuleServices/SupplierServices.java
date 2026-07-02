@@ -1,8 +1,8 @@
-package services.BookModuleServices;
+package services.AcquisitionModuleServices;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import dao.BookModuleDAO.SupplierDAO;
+import dao.AcquisitionModuleDAO.SupplierDAO;
 import model.BookModule.Supplier;
 
 public class SupplierServices {
@@ -12,24 +12,29 @@ public class SupplierServices {
         this.supplierDao = supplierDao;
     }
 
-    public void addSupplier(String supplierName, String supplierNumber) {
+    public void addSupplier(String donorType, String supplierName, String contactPerson ,String contactNo, String supplierAddress) {
         supplierName = supplierName.trim().replaceAll("\\s+", " ");
         supplierName = capitalizeWords(supplierName);
-        supplierNumber = supplierNumber.trim().replaceAll("\\s+", " ");
+        contactNo = contactNo.trim().replaceAll("\\s+", " ");
+        donorType = donorType.trim().replaceAll("\\s+", " ");
+        
+        
+        if (donorType == null || donorType.isEmpty()) throw new IllegalArgumentException("Must select contirbutor type!");
+        if(!donorType.equals("supplier"))  throw new IllegalArgumentException("Select proper type!");
 
         if (supplierName.isEmpty()) throw new IllegalArgumentException("Supplier Cannot be empty!");
-        if (supplierNumber.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
+        if (contactNo.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
 		if(supplierName.length() > 255) throw new IllegalArgumentException("Supplier is too long! Max 255 characters.");
 		
-        if(!supplierNumber.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
-        if(supplierNumber.length() > 11 || supplierNumber.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
+        if(!contactNo.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
+        if(contactNo.length() > 11 || contactNo.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
       
-        if (isExisting(supplierName, supplierNumber)) throw new IllegalArgumentException("Supplier already exist!");
+        if (isExisting(supplierName, contactNo)) throw new IllegalArgumentException("Supplier already exist!");
 
 
 
         try {
-            supplierDao.addSupplier(supplierName, supplierNumber);
+            supplierDao.addSupplier(supplierName, contactPerson, contactNo, supplierAddress);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database connection error!");
@@ -55,25 +60,25 @@ public class SupplierServices {
         }
     }
 
-    public void updateSupplier(int supplierId, String supplierName, String supplierNumber) {
+    public void updateSupplier(int supplierId, String supplierName, String contactPerson, String contactNo, String supplierAddress) {
         supplierName = supplierName.trim().replaceAll("\\s+", " ");
         supplierName = capitalizeWords(supplierName);
-        supplierNumber = supplierNumber.trim().replaceAll("\\s+", " ");
-        supplierNumber = capitalizeWords(supplierNumber);
+        contactNo = contactNo.trim().replaceAll("\\s+", " ");
+        contactNo = capitalizeWords(contactNo);
 
         if (supplierId < 0) throw new IllegalArgumentException("Select supplier first!");
         if (supplierName.isEmpty()) throw new IllegalArgumentException("Supplier Cannot be empty!");
-        if (supplierNumber.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
+        if (contactNo.isEmpty()) throw new IllegalArgumentException("Number Cannot be empty!");
     	if(supplierName.length() > 255) throw new IllegalArgumentException("Supplier is too long! Max 255 characters.");
 
-        if(!supplierNumber.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
-        if(supplierNumber.length() > 11 || supplierNumber.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
+        if(!contactNo.matches("09\\d{9}")) throw new IllegalArgumentException("Contact number must be a valid mobile number (09XXXXXXXXX)!");
+        if(contactNo.length() > 11 || contactNo.length() < 11) throw new IllegalArgumentException("Number is 11 digit only!"); 
       
-        if (isExisting(supplierName, supplierNumber)) throw new IllegalArgumentException("Supplier already exist");
+        if (isExisting(supplierName, contactNo)) throw new IllegalArgumentException("Supplier already exist");
         
 
         try {
-            supplierDao.updateSupplier(supplierId, supplierName, supplierNumber);
+            supplierDao.updateSupplier(supplierId, supplierName,contactPerson, contactNo, supplierAddress);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Database Connection error!");

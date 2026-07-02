@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import model.BookModule.Book;
-import model.BookModule.dto.BookDisplay;
+import model.dto.BookDisplay;
 import utility.DatabaseHelper;
 
 public class BookMaintenanceDAO {

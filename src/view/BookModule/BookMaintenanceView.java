@@ -1,26 +1,3 @@
-
-/*
- * wrapper tawag sa cinall ng method, wlang gaanong logic
- * todo ayusin ang dao , service , controller layer
- * gumawa ng class for Book- 
- * 
- * 
- * 
- * 
- * 
- */
-
-
-
-
-
-
-
-
-
-
-
-
 package view.BookModule;
 
 import javax.swing.JPanel;
@@ -33,7 +10,7 @@ import com.toedter.calendar.JDateChooser;
 
 import controller.BookModule.BookMaintenanceController;
 import model.BookModule.Book;
-import model.BookModule.dto.BookDisplay;
+import model.dto.BookDisplay;
 import utility.AppContext;
 import utility.TableRefresherHelper;
 
@@ -55,10 +32,6 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-
-// BAGO: FileMaintenancePanel extends JPanel
-// dati si FileMaintenance extends JFrame — nagbubukas ng bagong window
-// ngayon panel lang ito na nilo-load sa loob ng AdminDash
 public class BookMaintenanceView extends JPanel {
     private static final long serialVersionUID = 1L;
     private JTable tblBook;
@@ -107,10 +80,7 @@ public class BookMaintenanceView extends JPanel {
     }
     
     public void initComponents() {
-    	
-    	
-   
-        
+    	        
         componentsBorder = new JPanel();
         componentsBorder.setBorder(new LineBorder(new Color(51, 204, 51), 3, true));
         componentsBorder.setBounds(20, 21, 1083, 252);

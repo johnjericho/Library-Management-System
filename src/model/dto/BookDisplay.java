@@ -1,4 +1,4 @@
-package model.BookModule.dto;
+package model.dto;
 
 import java.sql.Date;
 

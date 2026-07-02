@@ -1,4 +1,4 @@
-package view.BookModule;
+package view.AcquisitionModule;
 
 import java.awt.Color;
 
@@ -6,213 +6,255 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 
-import controller.BookModule.SupplierController;
-import dao.BookModuleDAO.SupplierDAO;
-import model.BookModule.Supplier;
-import services.BookModuleServices.SupplierServices;
+import controller.AcquisitionModule.DonorController;
+import controller.AcquisitionModule.SupplierController;
+import model.dto.ContributorDisplay;
 import utility.AppContext;
-import utility.TableRefresherHelper;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import java.util.ArrayList;
 
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTable;
+import javax.swing.JComboBox;
 
-public class SupplierCrud extends JDialog {
+public class ContributorEditForm extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
-	private JTextField txtSupplier;
-	private JTextField txtNumber;
 
-	private JButton btnSave;
-	
 	private SupplierController supplierController = AppContext.getInstance().getSupplierController();
+	private DonorController donorController = AppContext.getInstance().getDonorController();
 
-	private DefaultTableModel tblModel;
-	private int selectedSupplierId = -1;
+	private JTextField txtContributorName;
+	private JTextField txtAddress;
+	private JTextField txtContactPer;
+	private JTextField txtContactNo;
+	private JComboBox<String> cmbxContributorType;
+	private JButton btnSave;
+
+	// edit mode tracking - both id and type kailangan sabay dahil independent ang PKs ng supplier/donor
 	private boolean isEditMode = false;
-	
-	
-	public SupplierCrud(SupplierController sc) {
-	    this.supplierController = sc;
+	private int selectedContributorId = -1;
+	private String selectedContributorType = "";
 
+	// ADD mode
+	public ContributorEditForm() {
 		execute();
 	}
-	
-	public void execute() {
-		 setPanel();
-		 initComponent();
-		 initAction();
+
+	// EDIT mode
+	public ContributorEditForm(ContributorDisplay contributor) {
+		execute();
+		loadForUpdate(contributor);
 	}
-	
+
+	public void execute() {
+		setPanel();
+		initComponent();
+		initAction();
+	}
+
 	public void setPanel() {
-		setBounds(100, 100, 469, 599);
+		setBounds(100, 100, 433, 438);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().setLayout(null);
-		
+
 		contentPanel = new JPanel();
 		contentPanel.setLayout(null);
 		contentPanel.setBackground(Color.LIGHT_GRAY);
-		contentPanel.setBounds(0, 0, 453, 560);
-		getContentPane().add(contentPanel);	
+		contentPanel.setBounds(0, 0, 417, 424);
+		getContentPane().add(contentPanel);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
 	}
-	
+
 	public void initComponent() {
 		JPanel componentsBorder = new JPanel();
-		componentsBorder.setBackground(Color.LIGHT_GRAY);
+		componentsBorder.setBackground(Color.WHITE);
 		componentsBorder.setLayout(null);
-		componentsBorder.setBorder(new LineBorder(new Color(51, 204, 51), 3));
-		componentsBorder.setBounds(14, 17, 430, 511);
+		componentsBorder.setBorder(new LineBorder(new Color(0, 128, 0), 3));
+		componentsBorder.setBounds(10, 11, 399, 366);
 		contentPanel.add(componentsBorder);
-		
-		JLabel lblSupplier = new JLabel("Supplier:");
+
+		JLabel lblSupplier = new JLabel("Name / Company");
 		lblSupplier.setForeground(new Color(51, 102, 51));
-		lblSupplier.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblSupplier.setBounds(25, 10, 139, 36);
+		lblSupplier.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblSupplier.setBounds(25, 73, 276, 36);
 		componentsBorder.add(lblSupplier);
-		
-		txtSupplier = new JTextField();
-		txtSupplier.setText("");
-		txtSupplier.setColumns(10);
-		txtSupplier.setBounds(142, 21, 209, 23);
-		componentsBorder.add(txtSupplier);
-		
+
+		txtContributorName = new JTextField();
+		txtContributorName.setColumns(10);
+		txtContributorName.setBounds(25, 103, 168, 23);
+		componentsBorder.add(txtContributorName);
+
+		JLabel lblContributorType = new JLabel("Contributor type");
+		lblContributorType.setForeground(new Color(51, 102, 51));
+		lblContributorType.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblContributorType.setBounds(25, 22, 276, 36);
+		componentsBorder.add(lblContributorType);
+
+		cmbxContributorType = new JComboBox<>();
+		cmbxContributorType.setBounds(25, 51, 168, 22);
+		cmbxContributorType.addItem("");
+		cmbxContributorType.addItem("supplier");
+		cmbxContributorType.addItem("donor");
+		componentsBorder.add(cmbxContributorType);
+
 		btnSave = new JButton("SAVE");
 		btnSave.setForeground(new Color(51, 102, 51));
-		btnSave.setFont(new Font("Tahoma", Font.BOLD, 15));
-		btnSave.setBounds(488, 357, 99, 20);
+		btnSave.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnSave.setBounds(25, 293, 87, 20);
 		componentsBorder.add(btnSave);
-		
-		txtNumber = new JTextField();
-		txtNumber.setText("");
-		txtNumber.setColumns(10);
-		txtNumber.setBounds(142, 55, 209, 23);
-		componentsBorder.add(txtNumber);
-		
-		JLabel lblNumber = new JLabel("Number: ");
-		lblNumber.setForeground(new Color(51, 102, 51));
-		lblNumber.setFont(new Font("Tahoma", Font.BOLD, 22));
-		lblNumber.setBounds(25, 46, 139, 36);
-		componentsBorder.add(lblNumber);
-		
-		String[] column = {"ID","Supplier","Number"};
-	    tblModel = new DefaultTableModel(column, 0) {
-		public boolean  isCellEditable(int row, int column){ return false; }
-	    };
-		
+
+		txtAddress = new JTextField();
+		txtAddress.setColumns(10);
+		txtAddress.setBounds(25, 226, 347, 56);
+		componentsBorder.add(txtAddress);
+
+		JLabel lblSupplierAddress = new JLabel("address");
+		lblSupplierAddress.setForeground(new Color(51, 102, 51));
+		lblSupplierAddress.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
+		lblSupplierAddress.setBounds(25, 198, 139, 36);
+		componentsBorder.add(lblSupplierAddress);
+
+		txtContactPer = new JTextField();
+		txtContactPer.setColumns(10);
+		txtContactPer.setBounds(25, 164, 168, 23);
+		componentsBorder.add(txtContactPer);
+
+		JLabel lblContactPerson = new JLabel("contact person");
+		lblContactPerson.setForeground(new Color(51, 102, 51));
+		lblContactPerson.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
+		lblContactPerson.setBounds(25, 135, 139, 36);
+		componentsBorder.add(lblContactPerson);
+
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBackground(new Color(51, 204, 51));
+		separator_1.setBounds(25, 135, 347, 10);
+		componentsBorder.add(separator_1);
+
+		txtContactNo = new JTextField();
+		txtContactNo.setColumns(10);
+		txtContactNo.setBounds(204, 165, 168, 23);
+		componentsBorder.add(txtContactNo);
+
+		JLabel lblNumber_1 = new JLabel("contact number");
+		lblNumber_1.setForeground(new Color(51, 102, 51));
+		lblNumber_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 15));
+		lblNumber_1.setBounds(203, 135, 139, 36);
+		componentsBorder.add(lblNumber_1);
+
 		JSeparator separator = new JSeparator();
 		separator.setBackground(new Color(51, 204, 51));
-		separator.setBounds(14, 539, 427, 10);
+		separator.setBounds(10, 388, 399, 10);
 		contentPanel.add(separator);
-		
+	}
+
+	public void initAction() {
+		btnSave.addActionListener(e -> {
+			String type = (String) cmbxContributorType.getSelectedItem();
+
+
+			if (isEditMode) {
+				if (type.equals("supplier")) {
+					updateSupplier();
+				} else if (type.equals("donor")) {
+					updateDonor();
+				}
+			} else {
+				if (type.equals("supplier")) {
+					addSupplier();
+				} else if (type.equals("donor")) {
+					addDonor();
+				}
+			}
+		});
+	}
+
 	
+	private void loadForUpdate(ContributorDisplay contributor) {
+		isEditMode = true;
+		selectedContributorId = contributor.getContributorId();
+		selectedContributorType = contributor.getContributorType();
+
+		cmbxContributorType.setSelectedItem(contributor.getContributorType());
+	//	cmbxContributorType.setEnabled(false); // type locked once editing existing record
+
+		txtContributorName.setText(contributor.getName());
+		txtContactPer.setText(contributor.getContactPerson());
+		txtContactNo.setText(contributor.getContactNumber());
+		txtAddress.setText(contributor.getAddress());
+
+		btnSave.setText("UPDATE");
+		setTitle("Edit Contributor");
 	}
 	
-		public void initAction() {
-			loadSupplier();
-			
-		   btnSave.addActionListener(e ->{
-			   addSupplier();
-			   
-		   });
-		   
-
-			
-		}
 	
-	  public void addSupplier(){
-		  String supplierName = txtSupplier.getText();
-		  String supplierNum = txtNumber.getText();
-		   
-		   try {
-		   supplierController.addSupplier(supplierName, supplierNum);
-		   JOptionPane.showMessageDialog(this, "Successfully added!");
-		   }catch(Exception e) {
-			   JOptionPane.showMessageDialog(this, e.getMessage(),"WARNING", JOptionPane.WARNING_MESSAGE);
-		   }
-	  }
-	  
-		public void loadSupplier() {
-			try {
-			tblModel.setRowCount(0);
-			ArrayList<Supplier> supplierList = supplierController.loadSupplier();
-			for(Supplier supplier : supplierList) {
-				Object[] eachRow = {supplier.getSupplierId(),supplier.getSupplierName(),supplier.getSupplierNumber()};
-				tblModel.addRow(eachRow);
-				}
-			
-			}catch(Exception e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	
-		public void updateSupplier() {
-		    String updateName = txtSupplier.getText();
-		    String updateNumber = txtNumber.getText();
 
-		    try {
-		        supplierController.updateSupplier(selectedSupplierId, updateName, updateNumber);
-		        JOptionPane.showMessageDialog(this, "Successfully updated");
-		        exitEditMode();
-		        loadSupplier();
-		    } catch (Exception e) {
-		        JOptionPane.showMessageDialog(this, e.getMessage());
-		    }
-		}
+	public void addSupplier() {
+		String name = txtContributorName.getText();
+		String contactPer = txtContactPer.getText();
+		String number = txtContactNo.getText();
+		String address = txtAddress.getText();
+		String type = (String) cmbxContributorType.getSelectedItem();
 
-		public void deleteSupplier() {
-		    int confirm = JOptionPane.showConfirmDialog(this, "Confirm delete supplier", "WARNING", JOptionPane.YES_NO_OPTION);
-		    if (confirm != JOptionPane.YES_OPTION) return;
-
-		    try {
-		        supplierController.deleteSupplier(selectedSupplierId);
-		        JOptionPane.showMessageDialog(this, "Successfully deleted!");
-		        loadSupplier();
-		        exitEditMode();
-		    } catch (Exception e) {
-		        JOptionPane.showMessageDialog(this, e.getMessage());
-		    }
+		try {
+			supplierController.addSupplier(type, name, contactPer, number, address);
+			JOptionPane.showMessageDialog(this, "Successfully added!");
+			this.dispose();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.WARNING_MESSAGE);
 		}
-		
+	}
 
+	public void addDonor() {
+		String name = txtContributorName.getText();
+		String contactPer = txtContactPer.getText();
+		String number = txtContactNo.getText();
+		String address = txtAddress.getText();
 
-		
-		private void enterEditMode() {
-			
-			if(selectedSupplierId < 0) return;
-			isEditMode = true;
-			btnSave.setEnabled(false);
+		try {
+			donorController.addDonor(name, contactPer, number, address);
+			JOptionPane.showMessageDialog(this, "Successfully added!");
+			this.dispose();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.WARNING_MESSAGE);
 		}
-		
-		private void exitEditMode() {
-		    isEditMode = false; 
-		    selectedSupplierId = -1;
-		    txtSupplier.setText("");   
-		    txtNumber.setText("");    
-		    btnSave.setEnabled(true);
-		}
-		
-	
-		
-		public static void main(String[] args) {
-		    SupplierController controller = new SupplierController(new SupplierServices(new SupplierDAO()));
+	}
 
-		    SupplierCrud dialog = new SupplierCrud(controller);
-		    dialog.setVisible(true);
+	public void updateSupplier() {
+		String name = txtContributorName.getText();
+		String contactPer = txtContactPer.getText();
+		String number = txtContactNo.getText();
+		String address = txtAddress.getText();
+
+		try {
+			// TODO: siguraduhin tugma ang signature na ito sa SupplierController mo
+			supplierController.updateSupplier(selectedContributorId, name, contactPer, number, address);
+			JOptionPane.showMessageDialog(this, "Successfully updated!");
+			this.dispose();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.WARNING_MESSAGE);
 		}
+	}
+
+	public void updateDonor() {
+		String name = txtContributorName.getText();
+		String contactPer = txtContactPer.getText();
+		String number = txtContactNo.getText();
+		String address = txtAddress.getText();
+
+		try {
+			// TODO: siguraduhin tugma ang signature na ito sa DonorController mo
+			donorController.updateDonor(selectedContributorId, name, contactPer, number, address);
+			JOptionPane.showMessageDialog(this, "Successfully updated!");
+			this.dispose();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.WARNING_MESSAGE);
+		}
+	}
 }
