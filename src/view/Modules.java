@@ -4,8 +4,9 @@ import javax.swing.JPanel;
 
 import view.AcquisitionModule.AcquisitionView;
 import view.BookModule.BookMaintenanceView;
+import view.CirculationModule.CirculationView;
 import view.InventoryModule.InventoryView;
-import view.UserModule.UserMaintenanceView;
+import view.UserModule.StudentTab.StudentMaintenanceView;
 
 import javax.swing.JButton;
 import java.awt.Color;
@@ -89,6 +90,10 @@ public class Modules extends JPanel {
         btnDashboard.addActionListener(e ->
             mainFrame.showPanel(new DashboardView()));
 
+        btnCirculation.addActionListener(e ->{
+        	mainFrame.showPanel(new CirculationView(mainFrame));
+        });
+        
         btnFileMaintenance.addActionListener(e ->
             mainFrame.showPanel(new BookMaintenanceView()));
         
@@ -97,7 +102,7 @@ public class Modules extends JPanel {
         });
         
         btnUserMaintenance.addActionListener( e -> {
-        	mainFrame.showPanel(new UserMaintenanceView());
+        	mainFrame.showPanel(new StudentMaintenanceView(mainFrame));
         });
 
         btnInventory.addActionListener(e ->{

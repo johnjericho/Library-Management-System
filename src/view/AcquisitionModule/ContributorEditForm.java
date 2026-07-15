@@ -257,4 +257,5 @@ public class ContributorEditForm extends JDialog {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "WARNING", JOptionPane.WARNING_MESSAGE);
 		}
 	}
+	
 }

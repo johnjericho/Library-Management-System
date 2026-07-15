@@ -103,6 +103,8 @@ public class ContributorDialogPicker extends JDialog {
 			public boolean isCellEditable(int row, int column) {
 				return column == 5; // buttons lang ang editable, para gumana ang cell editor
 			}
+ 	
+			
 		};
 
 		tblContributor = new JTable(tblModel);
@@ -139,44 +141,43 @@ public class ContributorDialogPicker extends JDialog {
 	}
 
 	public void initAction() {
-		btnAdd.addActionListener(e -> {
-			ContributorEditForm editForm = new ContributorEditForm();
-			editForm.setModal(true);
-			editForm.setVisible(true);
-			loadContributor(); // refresh pagkatapos mag-add
-		});
+	    btnAdd.addActionListener(e -> {
+	        ContributorEditForm editForm = new ContributorEditForm();
+	        editForm.setModal(true);
+	        editForm.setVisible(true);
+	        loadContributor(); // refresh pagkatapos mag-add
+	    });
 
-		txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-			public void insertUpdate(DocumentEvent e) { filter(); }
-			public void removeUpdate(DocumentEvent e) { filter(); }
-			public void changedUpdate(DocumentEvent e) { filter(); }
-		});
+	    txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+	        public void insertUpdate(DocumentEvent e) { filter(); }
+	        public void removeUpdate(DocumentEvent e) { filter(); }
+	        public void changedUpdate(DocumentEvent e) { filter(); }
+	    });
 
-		// row selection para sa selection mode (picker)
-		tblContributor.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				int row = tblContributor.getSelectedRow();
-				if (row == -1) return;
+	    // row selection para sa selection mode (picker)
+	    tblContributor.addMouseListener(new MouseAdapter() {
+	        public void mouseClicked(MouseEvent e) {
+	            int row = tblContributor.getSelectedRow();
+	            if (row == -1) return;
 
-				int col = tblContributor.columnAtPoint(e.getPoint());
-				if (col == 5) return; // ignore, hawak na ng action editor
+	            int col = tblContributor.columnAtPoint(e.getPoint());
+	            if (col == 5) return; // ignore, hawak na ng action editor
 
-				int id = (int) tblModel.getValueAt(row, 0);
-				String type = (String) tblModel.getValueAt(row, 1);
-				String name = (String) tblModel.getValueAt(row, 2);
+	            int id = (int) tblModel.getValueAt(row, 0);
+	            String type = (String) tblModel.getValueAt(row, 1);
+	            String name = (String) tblModel.getValueAt(row, 2);
 
-				// guard - iwas re-trigger sa parehong row
-				if (selectedContributorId != id || !selectedContributorType.equals(type)) {
-					selectedContributorId = id;
-					selectedContributorType = type;
-					selectedContributorName = name;
-				}
+	            selectedContributorId = id;
+	            selectedContributorType = type;
+	            selectedContributorName = name;
 
-				if (selectionMode && e.getClickCount() == 2) {
-					dispose();
-				}
-			}
-		});
+	            if (e.getClickCount() == 2) {
+	                dispose();
+	            }
+	        }
+	    });
+	    // NOTE: tinanggal na yung pangalawang duplicate MouseAdapter block na dati nandito.
+	    // Isa lang dapat na listener ang humahawak ng row selection + dispose.
 	}
 
 	public void loadContributor() {
@@ -256,7 +257,7 @@ public class ContributorDialogPicker extends JDialog {
 		loadContributor();
 	}
 
-	private void handleDelete(int row) {
+	private void deleteContributor(int row) {
 		int id = (int) tblModel.getValueAt(row, 0);
 		String type = (String) tblModel.getValueAt(row, 1);
 		String name = (String) tblModel.getValueAt(row, 2);
@@ -329,7 +330,7 @@ public class ContributorDialogPicker extends JDialog {
 
 			btnDelete.addActionListener(e -> {
 				fireEditingStopped();
-				handleDelete(currentRow);
+				deleteContributor(currentRow);
 			});
 		}
 
@@ -345,4 +346,15 @@ public class ContributorDialogPicker extends JDialog {
 			return "";
 		}
 	}
+
+	public int getSelectedContributorId() {
+		return selectedContributorId;
+	}
+
+	public String getSelectedContributorName() {
+		return selectedContributorName;
+	}
+	
+	
+	
 }

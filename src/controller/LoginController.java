@@ -18,6 +18,7 @@ public class LoginController {
         User user = userDAO.validateLogin(userName, password);
         return user != null; // true = login success
     	}catch(SQLException e) {
+    		e.printStackTrace();
     		throw new RuntimeException("Database Connection Problem");
      	}
         

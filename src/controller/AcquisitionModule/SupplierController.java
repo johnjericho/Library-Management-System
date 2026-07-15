@@ -3,7 +3,7 @@ package controller.AcquisitionModule;
 import java.util.ArrayList;
 
 import model.BookModule.Supplier;
-import services.AcquisitionModuleServices.SupplierServices;
+import services.AcquisitionModule.SupplierServices;
 
 public class SupplierController {
     private SupplierServices supplierServices;

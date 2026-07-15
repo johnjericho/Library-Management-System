@@ -1,3 +1,15 @@
+/*
+ * TODO:
+ * fix login architecture, tbl connection
+ * time in and timeout 
+ * circulation
+ */
+
+
+
+
+
+
 package view;
 
 import controller.LoginController;
@@ -142,6 +154,7 @@ public class LogIn extends JFrame {
                 JOptionPane.ERROR_MESSAGE);
         }
   }catch(RuntimeException e) {
+	  e.printStackTrace();
 	  JOptionPane.showMessageDialog(this, e.getMessage());
   }
     }
