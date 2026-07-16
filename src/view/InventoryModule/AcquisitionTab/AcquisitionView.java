@@ -1,4 +1,4 @@
-package view.AcquisitionModule;
+package view.InventoryModule.AcquisitionTab;
 
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -22,12 +22,16 @@ import com.toedter.calendar.JDateChooser;
 import controller.AcquisitionModule.AcquisitionController;
 import model.dto.AcquisitionDisplay;
 import utility.AppContext;
-import utility.TableRefresherHelper;
+import view.MainFrame;
+import view.InventoryModule.InventoryTab.InventoryView;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
 public class AcquisitionView extends JPanel {
+	
+	private MainFrame mainFrame;
+	private InventoryView inv;
 
 	private static final long serialVersionUID = 1L;
 	private JTextField txtTransaction;
@@ -55,8 +59,12 @@ public class AcquisitionView extends JPanel {
 	private int selectedAcquisitionId = -1;
 	private boolean isEditMode = false;
 	private String currentTransactionNo;
+	private JButton btnNew;
+	private JButton btnInventory;
+	private JButton btnAcquisition;
 
-	public AcquisitionView() {
+	public AcquisitionView(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 		initialize();
 	}
 
@@ -76,43 +84,43 @@ public class AcquisitionView extends JPanel {
 		JPanel componentsBorder = new JPanel();
 		componentsBorder.setLayout(null);
 		componentsBorder.setBorder(new LineBorder(new Color(51, 204, 51), 3, true));
-		componentsBorder.setBounds(22, 25, 1078, 211);
+		componentsBorder.setBounds(22, 61, 1078, 175);
 		add(componentsBorder);
 
 		JLabel lblTransaction = new JLabel("Transaction #");
 		lblTransaction.setForeground(new Color(51, 102, 51));
 		lblTransaction.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblTransaction.setBounds(10, 45, 120, 14);
+		lblTransaction.setBounds(20, 25, 120, 14);
 		componentsBorder.add(lblTransaction);
 
 		JLabel lblBookTitle = new JLabel("Book title");
 		lblBookTitle.setForeground(new Color(51, 102, 51));
 		lblBookTitle.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblBookTitle.setBounds(10, 110, 97, 14);
+		lblBookTitle.setBounds(20, 90, 97, 14);
 		componentsBorder.add(lblBookTitle);
 
 		JLabel lblContributor = new JLabel("Contributor");
 		lblContributor.setForeground(new Color(51, 102, 51));
 		lblContributor.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblContributor.setBounds(10, 135, 113, 24);
+		lblContributor.setBounds(20, 115, 113, 24);
 		componentsBorder.add(lblContributor);
 
 		JLabel lblPrice = new JLabel("Price");
 		lblPrice.setForeground(new Color(51, 102, 51));
 		lblPrice.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblPrice.setBounds(667, 110, 97, 14);
+		lblPrice.setBounds(637, 59, 97, 14);
 		componentsBorder.add(lblPrice);
 
 		JLabel lblQuantity = new JLabel("Quantity");
 		lblQuantity.setForeground(new Color(51, 102, 51));
 		lblQuantity.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblQuantity.setBounds(638, 76, 97, 20);
+		lblQuantity.setBounds(608, 25, 97, 20);
 		componentsBorder.add(lblQuantity);
 
 		JLabel lblDateRecieved = new JLabel("Date Receive");
 		lblDateRecieved.setForeground(new Color(51, 102, 51));
 		lblDateRecieved.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblDateRecieved.setBounds(609, 135, 126, 14);
+		lblDateRecieved.setBounds(579, 84, 126, 14);
 		componentsBorder.add(lblDateRecieved);
 
 		JLabel lblSearch = new JLabel("Search");
@@ -123,30 +131,30 @@ public class AcquisitionView extends JPanel {
 
 		txtTransaction = new JTextField();
 		txtTransaction.setColumns(10);
-		txtTransaction.setBounds(130, 45, 191, 20);
+		txtTransaction.setBounds(140, 25, 126, 20);
 		txtTransaction.setEditable(false);
 		componentsBorder.add(txtTransaction);
 
 		txtAccession = new JTextField();
 		txtAccession.setEditable(false);
 		txtAccession.setColumns(10);
-		txtAccession.setBounds(130, 76, 191, 20);
+		txtAccession.setBounds(140, 56, 191, 20);
 		componentsBorder.add(txtAccession);
 
 		txtBookTitle = new JTextField();
 		txtBookTitle.setColumns(10);
-		txtBookTitle.setBounds(130, 110, 191, 20);
+		txtBookTitle.setBounds(140, 90, 191, 20);
 		txtBookTitle.setEditable(false);
 		componentsBorder.add(txtBookTitle);
 
 		txtContributor = new JTextField();
 		txtContributor.setColumns(10);
-		txtContributor.setBounds(130, 140, 191, 20);
+		txtContributor.setBounds(140, 120, 191, 20);
 		txtContributor.setEditable(false);
 		componentsBorder.add(txtContributor);
 
 		calDateReceive = new JDateChooser();
-		calDateReceive.setBounds(732, 135, 191, 20);
+		calDateReceive.setBounds(702, 84, 191, 20);
 		JTextField textField = (JTextField) calDateReceive.getDateEditor().getUiComponent();
 		textField.setEditable(false);
 		calDateReceive.setMaxSelectableDate(new Date());
@@ -155,36 +163,42 @@ public class AcquisitionView extends JPanel {
 		btnBrowseContributor = new JButton("browse");
 		btnBrowseContributor.setForeground(new Color(51, 102, 51));
 		btnBrowseContributor.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnBrowseContributor.setBounds(331, 140, 80, 20);
+		btnBrowseContributor.setBounds(341, 120, 80, 20);
 		componentsBorder.add(btnBrowseContributor);
 
 		txtPrice = new JTextField();
 		txtPrice.setColumns(10);
-		txtPrice.setBounds(732, 108, 191, 20);
+		txtPrice.setBounds(702, 57, 191, 20);
 		componentsBorder.add(txtPrice);
 
 		txtQuantity = new JTextField();
 		txtQuantity.setColumns(10);
-		txtQuantity.setBounds(732, 79, 191, 20);
+		txtQuantity.setBounds(702, 28, 191, 20);
 		componentsBorder.add(txtQuantity);
 
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setOrientation(SwingConstants.VERTICAL);
 		separator_1.setForeground(new Color(51, 204, 51));
-		separator_1.setBounds(506, 11, 24, 189);
+		separator_1.setBounds(506, 11, 24, 148);
 		componentsBorder.add(separator_1);
 
 		btnBrowseBookTitle = new JButton("browse");
 		btnBrowseBookTitle.setForeground(new Color(51, 102, 51));
 		btnBrowseBookTitle.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnBrowseBookTitle.setBounds(331, 110, 80, 20);
+		btnBrowseBookTitle.setBounds(341, 90, 80, 20);
 		componentsBorder.add(btnBrowseBookTitle);
 
 		JLabel lblAccession = new JLabel("Accession #");
 		lblAccession.setForeground(new Color(51, 102, 51));
 		lblAccession.setFont(new Font("Tahoma", Font.BOLD, 17));
-		lblAccession.setBounds(10, 76, 120, 14);
+		lblAccession.setBounds(20, 56, 120, 14);
 		componentsBorder.add(lblAccession);
+		
+		btnNew = new JButton("NEW");
+		btnNew.setForeground(new Color(51, 102, 51));
+		btnNew.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnNew.setBounds(271, 25, 60, 20);
+		componentsBorder.add(btnNew);
 
 		txtSearch = new JTextField();
 		txtSearch.setColumns(10);
@@ -235,10 +249,39 @@ public class AcquisitionView extends JPanel {
 		btnDelete.setEnabled(false);
 		btnDelete.setBounds(217, 260, 95, 20);
 		add(btnDelete);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
+		panel.setBorder(new LineBorder(new Color(192, 192, 192), 18, true));
+		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBounds(62, 0, 309, 42);
+		add(panel);
+		
+		btnAcquisition = new JButton("ACQUISITION");
+		btnAcquisition.setForeground(new Color(51, 102, 51));
+		btnAcquisition.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnAcquisition.setEnabled(true);
+		btnAcquisition.setBounds(158, 11, 138, 20);
+		panel.add(btnAcquisition);
+		
+		btnInventory = new JButton("INVENTORY");
+		btnInventory.setForeground(new Color(51, 102, 51));
+		btnInventory.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnInventory.setEnabled(true);
+		btnInventory.setBounds(10, 11, 138, 20);
+		panel.add(btnInventory);
 	}
 
+	// BAGO: setter para sa shared instance mula sa Modules
+	public void setInventoryView(InventoryView inv) {
+	    this.inv = inv;
+	}
+	
 	public void initActions() {
-
+		
+		btnInventory.addActionListener(e ->{
+		    mainFrame.showPanel(inv);
+		}); 
 		btnBrowseBookTitle.addActionListener(e -> {
 
 			BookDialogPicker bookDialog = new BookDialogPicker();
@@ -335,6 +378,17 @@ public class AcquisitionView extends JPanel {
 			public void removeUpdate(javax.swing.event.DocumentEvent e) { searchAcquisition(); }
 			public void changedUpdate(javax.swing.event.DocumentEvent e) { searchAcquisition(); }
 		});
+		
+		
+		btnNew.addActionListener(e ->{
+			
+			int option = JOptionPane.showConfirmDialog(this, "Create New Transaction No?", "warning", JOptionPane.YES_NO_OPTION);
+		if(option == JOptionPane.YES_OPTION) {
+			clearItemFields();
+			startNewTransactionBatch();
+		}
+		
+			});
 	}
 
 	private void restoreSelectedRow() {

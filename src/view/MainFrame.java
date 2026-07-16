@@ -49,4 +49,8 @@ public class MainFrame extends JFrame {
         contentPane.revalidate();
         contentPane.repaint();
     }
+    
+    public Modules modules() {
+    	return modules;
+    }
 }

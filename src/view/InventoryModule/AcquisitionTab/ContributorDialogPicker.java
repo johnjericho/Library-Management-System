@@ -1,4 +1,4 @@
-package view.AcquisitionModule;
+package view.InventoryModule.AcquisitionTab;
 
 import java.awt.Color;
 import java.awt.Component;

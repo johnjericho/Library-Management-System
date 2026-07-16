@@ -70,7 +70,6 @@ public class Main {
 //				CategoryController categoryController = new CategoryController(categoryDao);
 					 
 			    AppContext ctx = AppContext.getInstance();
-			    ctx.setMainFrame(new MainFrame());
 			    ctx.setAuthorController(new AuthorController(new AuthorServices(new AuthorDAO())));
 			    ctx.setPublisherController(new PublisherController(new PublisherServices(new PublisherDAO()))); 
 			    ctx.setCategoryController(new CategoryController(new CategoryServices(new CategoryDAO())));	
@@ -86,6 +85,9 @@ public class Main {
 				ctx.setLibrarianMaintenanceController(new LibrarianMaintenanceController(new LibrarianMaintenanceServices(new LibrarianMaintenanceDAO())));
 				ctx.setCirculationController(new CirculationController(new CirculationServices(new CirculationDAO())));
 				ctx.setVisitLogController(new VisitLogController(new VisitLogServices(new VisitLogDAO())));
+				
+			    ctx.setMainFrame(new MainFrame());
+
 				LogIn login = new LogIn();
 				login.setVisible(true);
 				} catch (Exception e) {
