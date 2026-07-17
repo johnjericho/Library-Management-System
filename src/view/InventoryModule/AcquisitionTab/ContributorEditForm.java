@@ -100,8 +100,8 @@ public class ContributorEditForm extends JDialog {
 		cmbxContributorType = new JComboBox<>();
 		cmbxContributorType.setBounds(25, 51, 168, 22);
 		cmbxContributorType.addItem("");
-		cmbxContributorType.addItem("supplier");
-		cmbxContributorType.addItem("donor");
+		cmbxContributorType.addItem("Supplier");
+		cmbxContributorType.addItem("Donor");
 		componentsBorder.add(cmbxContributorType);
 
 		btnSave = new JButton("SAVE");
@@ -160,15 +160,15 @@ public class ContributorEditForm extends JDialog {
 
 
 			if (isEditMode) {
-				if (type.equals("supplier")) {
+				if (type.equals("Supplier")) {
 					updateSupplier();
-				} else if (type.equals("donor")) {
+				} else if (type.equals("Donor")) {
 					updateDonor();
 				}
 			} else {
-				if (type.equals("supplier")) {
+				if (type.equals("Supplier")) {
 					addSupplier();
-				} else if (type.equals("donor")) {
+				} else if (type.equals("Donor")) {
 					addDonor();
 				}
 			}

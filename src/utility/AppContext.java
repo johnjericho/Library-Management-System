@@ -1,6 +1,8 @@
 package utility;
 
+import controller.LoginController;
 import controller.AcquisitionModule.AcquisitionController;
+import controller.AcquisitionModule.AcquisitionTransactionController;
 import controller.AcquisitionModule.DonorController;
 import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
@@ -21,6 +23,7 @@ public class AppContext {
 
     private static AppContext instance;
 
+    private LoginController loginController;
     private MainFrame mainFrame;
     private AuthorController authorController;
     private PublisherController publisherController;
@@ -37,8 +40,8 @@ public class AppContext {
     private LibrarianMaintenanceController librarianMaintenanceController;
     private CirculationController circulationController;
     private VisitLogController visitLogController;
-    
-    
+    private AcquisitionTransactionController acquisitionTransactionController;
+
 
 	private AppContext() {}
 
@@ -51,6 +54,7 @@ public class AppContext {
 
     // Getters
     public MainFrame getMainFrame() {return mainFrame; }
+	public LoginController getLoginController() {  return loginController;  }
     public AuthorController getAuthorController() { return authorController; }
     public PublisherController getPublisherController() { return publisherController; }
     public CategoryController getCategoryController() { return categoryController; }
@@ -66,16 +70,14 @@ public class AppContext {
     public LibrarianMaintenanceController getLibrarianMaintenanceController() {return librarianMaintenanceController; }
     public  CirculationController getCirculationController() { return  circulationController;  }
     public VisitLogController getVisitLogController() {	return visitLogController; }
-
+	public AcquisitionTransactionController getAcquisitionTransactionController() {return acquisitionTransactionController; }
     
 
-
-
-    
 
 
     // Setters — sa Main.java lang gagamitin
     public void setMainFrame(MainFrame mainFrame) { this.mainFrame = mainFrame; }
+	public void setLoginController(LoginController login) {	this.loginController = login;	}
     public void setAuthorController(AuthorController authorController) { this.authorController = authorController; }
     public void setPublisherController(PublisherController publishgerController) { this.publisherController = publishgerController; }
     public void setCategoryController(CategoryController categoryController) { this.categoryController = categoryController; }
@@ -91,6 +93,8 @@ public class AppContext {
 	public void setLibrarianMaintenanceController(LibrarianMaintenanceController librarianMaintenanceController) { this.librarianMaintenanceController = librarianMaintenanceController; }
     public void setCirculationController( CirculationController circulationController) { this.circulationController = circulationController; }
 	public void setVisitLogController(VisitLogController visitLogController) {	this.visitLogController = visitLogController; }
+	public void setAcquisitionTransactionController(AcquisitionTransactionController acquisitionTransactionController) {this.acquisitionTransactionController = acquisitionTransactionController; }
+
 
 
     

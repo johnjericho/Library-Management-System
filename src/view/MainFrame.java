@@ -3,25 +3,24 @@ package view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-// BINAGO: AdminDash → MainFrame (mas malinaw na pangalan)
-// siya ang iisang JFrame ng buong app pagkatapos mag-login
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
+    
+    //PANEL
     private JPanel contentPane;
     private JPanel currentPanel;
     
-    private Modules modules; // composition
+    //COMPOSITION
+    private Modules modules; 
   
     
-    public MainFrame() {
-    	
-        executeCode();
+    public MainFrame() {    	
+        execute();
     }
 
-    public void executeCode() {
+    public void execute() {
         setupFrame();
-        showPanel(new DashboardView()); // default panel kapag nag-open ang MainFrame
-        // BINAGO: MainFrame na ang naipass, hindi na AdminDash
+        showPanel(new DashboardView()); 
         modules = new Modules(this);
         modules.setBounds(0, 0, 240, 768);
         contentPane.add(modules);
@@ -38,7 +37,6 @@ public class MainFrame extends JFrame {
     }
 
  
-
     public void showPanel(JPanel panel) {
         if (currentPanel != null) {
             contentPane.remove(currentPanel);
@@ -50,7 +48,5 @@ public class MainFrame extends JFrame {
         contentPane.repaint();
     }
     
-    public Modules modules() {
-    	return modules;
-    }
+
 }

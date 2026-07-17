@@ -31,7 +31,7 @@ public class AcquisitionDAO {
 					nextNumber = Integer.parseInt(digitsOnly) + 1;
 				}
 			}
-			return String.format("TRANS# - %04d", nextNumber);
+			return String.format("TRX - %04d", nextNumber);
 		}
 	}
 
@@ -134,13 +134,12 @@ public class AcquisitionDAO {
 
 		ArrayList<AcquisitionDisplay> loadAcqu = new ArrayList<>();
 
-		String sql = "SELECT a.acquisitionId, a.transactionNo, a.AccessionNo, b.bookTitle, "
-					+ "a.supplierId, s.supplierName, a.DonorId, d.donorName, a.bookPrice, a.dateAcquired "
+		String sql = "SELECT a.acquisitionId, a.transactionNo, a.supplierId, a.donorId , a.dateAcquired, "
+				    + "s.supplierName, d.donorName "
 					+ "FROM tbl_acquisition a "
-					+ "JOIN tbl_book b ON a.bookId = b.bookId "
 					+ "LEFT JOIN tbl_Supplier s ON a.supplierId = s.supplierId "
 					+ "LEFT JOIN tbl_donor d ON a.donorId = d.donorId "
-					+ "ORDER BY a.AccessionNo ASC";
+					+ "ORDER BY a.transactionNo ASC";
 
 		try (
 			Connection conn = DatabaseHelper.getConnection();
@@ -151,9 +150,7 @@ public class AcquisitionDAO {
 				AcquisitionDisplay acquiDisplay = new AcquisitionDisplay();
 				acquiDisplay.setAcquisitionId(rs.getInt("acquisitionId"));
 				acquiDisplay.setTransactionNo(rs.getString("transactionNo"));
-				acquiDisplay.setAccessionNo(rs.getString("AccessionNo"));
-				acquiDisplay.setBookTitle(rs.getString("bookTitle"));
-
+				
 				rs.getInt("supplierId");
 				if (!rs.wasNull()) {
 					acquiDisplay.setContributorType("Supplier");
@@ -166,7 +163,6 @@ public class AcquisitionDAO {
 					}
 				}
 
-				acquiDisplay.setBookPrice(rs.getInt("bookPrice"));
 				acquiDisplay.setDateAcquired(rs.getDate("dateAcquired"));
 
 				loadAcqu.add(acquiDisplay);
@@ -177,61 +173,57 @@ public class AcquisitionDAO {
 	
 	
 	// ---------- SEARCH ----------
-		public ArrayList<AcquisitionDisplay> searchAcquisition(String keyword) throws SQLException {
+	public ArrayList<AcquisitionDisplay> searchAcquisition(String keyword) throws SQLException {
 
-			ArrayList<AcquisitionDisplay> searchAcqu = new ArrayList<>();
+	    ArrayList<AcquisitionDisplay> searchAcqu = new ArrayList<>();
 
-			String sql = "SELECT a.acquisitionId, a.transactionNo, a.AccessionNo, b.bookTitle, "
-						+ "a.supplierId, s.supplierName, a.DonorId, d.donorName, a.bookPrice, a.dateAcquired "
-						+ "FROM tbl_acquisition a "
-						+ "JOIN tbl_book b ON a.bookId = b.bookId "
-						+ "LEFT JOIN tbl_Supplier s ON a.supplierId = s.supplierId "
-						+ "LEFT JOIN tbl_donor d ON a.donorId = d.donorId "
-						+ "WHERE a.transactionNo LIKE ? "
-						+ "OR a.AccessionNo LIKE ? "
-						+ "OR b.bookTitle LIKE ? "
-						+ "OR s.supplierName LIKE ? "
-						+ "OR d.donorName LIKE ?";
+	    String sql =
+	            "SELECT a.acquisitionId, a.transactionNo, a.dateAcquired, " +
+	            "a.supplierId, s.supplierName, " +
+	            "a.donorId, d.donorName " +
+	            "FROM tbl_acquisition a " +
+	            "LEFT JOIN tbl_supplier s ON a.supplierId = s.supplierId " +
+	            "LEFT JOIN tbl_donor d ON a.donorId = d.donorId " +
+	            "WHERE a.transactionNo LIKE ? " +
+	            "OR s.supplierName LIKE ? " +
+	            "OR d.donorName LIKE ? " +
+	            "ORDER BY a.acquisitionId DESC";
 
-			try (
-				Connection conn = DatabaseHelper.getConnection();
-				PreparedStatement stmt = conn.prepareStatement(sql);
-			) {
-				String likeKeyword = "%" + keyword + "%";
-				stmt.setString(1, likeKeyword);
-				stmt.setString(2, likeKeyword);
-				stmt.setString(3, likeKeyword);
-				stmt.setString(4, likeKeyword);
-				stmt.setString(5, likeKeyword);
+	    try (
+	        Connection conn = DatabaseHelper.getConnection();
+	        PreparedStatement stmt = conn.prepareStatement(sql);
+	    ) {
 
-				try (ResultSet rs = stmt.executeQuery()) {
-					while (rs.next()) {
-						AcquisitionDisplay acquiDisplay = new AcquisitionDisplay();
-						acquiDisplay.setAcquisitionId(rs.getInt("acquisitionId"));
-						acquiDisplay.setTransactionNo(rs.getString("transactionNo"));
-						acquiDisplay.setAccessionNo(rs.getString("AccessionNo"));
-						acquiDisplay.setBookTitle(rs.getString("bookTitle"));
+	        String likeKeyword = "%" + keyword + "%";
 
-						rs.getInt("supplierId");
-						if (!rs.wasNull()) {
-							acquiDisplay.setContributorType("Supplier");
-							acquiDisplay.setContributorName(rs.getString("supplierName"));
-						} else {
-							rs.getInt("DonorId");
-							if (!rs.wasNull()) {
-								acquiDisplay.setContributorType("Donor");
-								acquiDisplay.setContributorName(rs.getString("donorName"));
-							}
-						}
+	        stmt.setString(1, likeKeyword);
+	        stmt.setString(2, likeKeyword);
+	        stmt.setString(3, likeKeyword);
 
-						acquiDisplay.setBookPrice(rs.getInt("bookPrice"));
-						acquiDisplay.setDateAcquired(rs.getDate("dateAcquired"));
+	        try (ResultSet rs = stmt.executeQuery()) {
 
-						searchAcqu.add(acquiDisplay);
-					}
-				}
-				return searchAcqu;
-			}
-		}
+	            while (rs.next()) {
+
+	                AcquisitionDisplay display = new AcquisitionDisplay();
+
+	                display.setAcquisitionId(rs.getInt("acquisitionId"));
+	                display.setTransactionNo(rs.getString("transactionNo"));
+	                display.setDateAcquired(rs.getDate("dateAcquired"));
+
+	                if (rs.getObject("supplierId") != null) {
+	                    display.setContributorType("Supplier");
+	                    display.setContributorName(rs.getString("supplierName"));
+	                } else if (rs.getObject("donorId") != null) {
+	                    display.setContributorType("Donor");
+	                    display.setContributorName(rs.getString("donorName"));
+	                }
+
+	                searchAcqu.add(display);
+	            }
+	        }
+	    }
+
+	    return searchAcqu;
+	}
 	
 }

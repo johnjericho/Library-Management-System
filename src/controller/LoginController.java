@@ -1,26 +1,19 @@
 package controller;
 
-import java.sql.SQLException;
 
-import dao.UserDAO;
-import model.User;
+import services.LoginServices;
 
 public class LoginController {
 
-    private UserDAO userDAO;
+    private LoginServices loginServices;
 
-    public LoginController() {
-       userDAO = new UserDAO();
+    public LoginController(LoginServices loginServices) {
+      this.loginServices = loginServices;
     }
  
-    public boolean login(String userName, String password) {
-    	try {
-        User user = userDAO.validateLogin(userName, password);
-        return user != null; // true = login success
-    	}catch(SQLException e) {
-    		e.printStackTrace();
-    		throw new RuntimeException("Database Connection Problem");
-     	}
-        
+    public boolean login(String userName, String passWord) {
+    	
+    	return loginServices.login(userName, passWord);
     }
+
 }

@@ -45,7 +45,12 @@ public class BookDialogPicker extends JDialog {
 	private BookMaintenanceController bookMaintenanceController = AppContext.getInstance().getBookMaintenanceController();
 	
 	private int selectedBookId = -1;
+	private String selectedBookIsbn = "";
 	private String selectedBookTitle;
+	private String selectedBookAuthor = "";
+	private String selectedBookPublisher = "";
+	private String selectedBookCategory = "";
+	
 
 	public BookDialogPicker() {
 		initialize();
@@ -74,7 +79,7 @@ public class BookDialogPicker extends JDialog {
 	
 	public void initComponent() {
 		
-		String[] column = {"BOOK ID","ISBN", "BOOK TITLE", "BOOK AUTHOR"};	
+		String[] column = {"BOOK ID","ISBN", "BOOK TITLE", "BOOK AUTHOR","BOOK PUBLISHER", "BOOK CATEGORY",};	
 	    tblModel = new DefaultTableModel(column, 0) {
 		public boolean  isCellEditable(int row, int column){ return false; }
 	   };		
@@ -84,6 +89,17 @@ public class BookDialogPicker extends JDialog {
 		scrollPane = new JScrollPane(tblBookRecord);
 		scrollPane.setBounds(10, 52, 688, 344);
 		contentPanel.add(scrollPane);
+		
+		//HIDE COLUMN BOOK ID
+		tblBookRecord.getColumnModel().getColumn(0).setMinWidth(0);
+		tblBookRecord.getColumnModel().getColumn(0).setMaxWidth(0);
+		tblBookRecord.getColumnModel().getColumn(0).setWidth(0);
+		
+		//HIDE COLUMN BOOK PUBLSIHER
+		tblBookRecord.getColumnModel().getColumn(4).setMinWidth(0);
+		tblBookRecord.getColumnModel().getColumn(4).setMaxWidth(0);
+		tblBookRecord.getColumnModel().getColumn(4).setWidth(0);
+		
 		
 		JSeparator separator = new JSeparator();
 		separator.setBackground(new Color(51, 204, 51));
@@ -114,12 +130,24 @@ public class BookDialogPicker extends JDialog {
 			 
 			 if(selectedRow != -1) {
 				 int idValue = (int) tblModel.getValueAt(selectedRow, 0);
+				 String bookIsbn = (String) tblModel.getValueAt(selectedRow, 1);
 				 String bookTitle = (String) tblModel.getValueAt(selectedRow, 2);
+				 String bookAuthor = (String) tblModel.getValueAt(selectedRow, 3);
+				 String bookPublisher = (String) tblModel.getValueAt(selectedRow, 4);
+				 String bookCategory = (String) tblModel.getValueAt(selectedRow, 5);
+
+
+
 			 
 			 
 			 if(idValue != selectedBookId) {
 				 selectedBookId = idValue;
+				 selectedBookIsbn = bookIsbn;
 				 selectedBookTitle = bookTitle;
+				 selectedBookAuthor = bookAuthor;
+				 selectedBookPublisher = bookPublisher;
+				 selectedBookCategory = bookCategory;
+				 
 			 }
 		 }
 		});
@@ -159,7 +187,10 @@ public class BookDialogPicker extends JDialog {
 				book.getBookId(),
 				book.getBookIsbn(),
 				book.getBookTitle(),
-				book.getBookAuthor()
+				book.getBookAuthor(),
+				book.getBookPublisher(),
+				book.getBookCategory()
+				
 				};
 		tblModel.addRow(bookRow);
 		}
@@ -188,6 +219,9 @@ public class BookDialogPicker extends JDialog {
                         book.getBookIsbn(),
                         book.getBookTitle(),
                         book.getBookAuthor(),
+        				book.getBookPublisher(),
+        				book.getBookCategory()
+        				
                    };
                 tblModel.addRow(row);
             }
@@ -202,8 +236,25 @@ public class BookDialogPicker extends JDialog {
 		return selectedBookId;
 	}
 	
+	public String getSelectedBookIsbn() {
+		return selectedBookIsbn;
+	}
+	
 	public String getSelectedBookitle() {
 		return selectedBookTitle;
+	}
+	
+
+	public String getSelectedBookAuthor() {
+		return selectedBookAuthor;
+	}
+	
+	public String getSelectedBookPublisher() {
+		return selectedBookPublisher;
+	}
+
+	public String getSelectedBookCategory() {
+		return selectedBookCategory;
 	}
 
 }

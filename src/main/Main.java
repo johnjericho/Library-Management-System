@@ -2,7 +2,9 @@ package main;
 
 import java.awt.EventQueue;
 
+import controller.LoginController;
 import controller.AcquisitionModule.AcquisitionController;
+import controller.AcquisitionModule.AcquisitionTransactionController;
 import controller.AcquisitionModule.DonorController;
 import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
@@ -17,7 +19,9 @@ import controller.UserModule.StudentTab.DepartmentController;
 import controller.UserModule.StudentTab.GradeController;
 import controller.UserModule.StudentTab.SectionController;
 import controller.UserModule.StudentTab.StudentMaintenanceController;
+import dao.UserDAO;
 import dao.AcquisitionModule.AcquisitionDAO;
+import dao.AcquisitionModule.AcquisitionTransactionDAO;
 import dao.AcquisitionModule.DonorDAO;
 import dao.AcquisitionModule.SupplierDAO;
 import dao.BookModule.AuthorDAO;
@@ -32,7 +36,9 @@ import dao.UserModule.StudentTab.DepartmentDAO;
 import dao.UserModule.StudentTab.GradeDAO;
 import dao.UserModule.StudentTab.SectionDAO;
 import dao.UserModule.StudentTab.StudentMaintenanceDAO;
+import services.LoginServices;
 import services.AcquisitionModule.AcquisitionServices;
+import services.AcquisitionModule.AcquisitionTransactionServices;
 import services.AcquisitionModule.DonorServices;
 import services.AcquisitionModule.SupplierServices;
 import services.BookModule.AuthorServices;
@@ -68,8 +74,9 @@ public class Main {
 //				
 //				CategoryDAO categoryDao = new CategoryDAO();
 //				CategoryController categoryController = new CategoryController(categoryDao);
-					 
+					
 			    AppContext ctx = AppContext.getInstance();
+			    ctx.setLoginController(new LoginController(new LoginServices(new UserDAO())));
 			    ctx.setAuthorController(new AuthorController(new AuthorServices(new AuthorDAO())));
 			    ctx.setPublisherController(new PublisherController(new PublisherServices(new PublisherDAO()))); 
 			    ctx.setCategoryController(new CategoryController(new CategoryServices(new CategoryDAO())));	
@@ -85,8 +92,8 @@ public class Main {
 				ctx.setLibrarianMaintenanceController(new LibrarianMaintenanceController(new LibrarianMaintenanceServices(new LibrarianMaintenanceDAO())));
 				ctx.setCirculationController(new CirculationController(new CirculationServices(new CirculationDAO())));
 				ctx.setVisitLogController(new VisitLogController(new VisitLogServices(new VisitLogDAO())));
-				
-			    ctx.setMainFrame(new MainFrame());
+				ctx.setAcquisitionTransactionController(new AcquisitionTransactionController(new AcquisitionTransactionServices(new AcquisitionTransactionDAO())));
+												 
 
 				LogIn login = new LogIn();
 				login.setVisible(true);

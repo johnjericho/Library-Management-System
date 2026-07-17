@@ -50,6 +50,7 @@ public class ContributorDialogPicker extends JDialog {
 
 	// selection mode - para magamit din 'to bilang picker sa AcquisitionForm, parang BookPickerDialog
 	private boolean selectionMode = false;
+	
 	private int selectedContributorId = -1;
 	private String selectedContributorType = "";
 	private String selectedContributorName = "";
@@ -187,7 +188,7 @@ public class ContributorDialogPicker extends JDialog {
 			ArrayList<Supplier> suppliers = supplierController.loadSupplier();
 			for (Supplier s : suppliers) {
 				contributorList.add(new ContributorDisplay(
-						s.getSupplierId(), "supplier", s.getSupplierName(),
+						s.getSupplierId(), "Supplier", s.getSupplierName(),
 						s.getSupplierContactPerson(), s.getSupplierNumber(), s.getSupplierAddress()));
 			}
 		} catch (Exception e) {
@@ -198,7 +199,7 @@ public class ContributorDialogPicker extends JDialog {
 			ArrayList<Donor> donors = donorController.loadDonor();
 			for (Donor d : donors) {
 				contributorList.add(new ContributorDisplay(
-						d.getDonorId(), "donor", d.getDonorName(),
+						d.getDonorId(), "Donor", d.getDonorName(),
 						d.getDonorContactPerson(), d.getDonorNumber(), d.getDonorAddress()));
 			}
 		} catch (Exception e) {
@@ -269,10 +270,10 @@ public class ContributorDialogPicker extends JDialog {
 		if (confirm != JOptionPane.YES_OPTION) return;
 
 		try {
-			if (type.equals("supplier")) {
+			if (type.equals("Supplier")) {
 				// TODO: siguraduhin tugma ang signature na ito sa SupplierController mo
 				supplierController.deleteSupplier(id);
-			} else if (type.equals("donor")) {
+			} else if (type.equals("Donor")) {
 				// TODO: siguraduhin tugma ang signature na ito sa DonorController mo
 				donorController.deleteDonor(id);
 			}
@@ -353,6 +354,10 @@ public class ContributorDialogPicker extends JDialog {
 
 	public String getSelectedContributorName() {
 		return selectedContributorName;
+	}
+
+	public String getSelectedContributorType() {
+		return selectedContributorType;
 	}
 	
 	

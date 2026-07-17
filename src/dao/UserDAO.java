@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class UserDAO {
 
-    public User validateLogin(String email, String password) throws SQLException {
+    public User logIn(String email, String password) throws SQLException {
         String sql = "SELECT * FROM tbl_user WHERE email = ? AND password = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

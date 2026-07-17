@@ -1,18 +1,7 @@
-/*
- * TODO:
- * fix login architecture, tbl connection
- * time in and timeout 
- * circulation
- */
-
-
-
-
-
-
 package view;
 
 import controller.LoginController;
+import utility.AppContext;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -23,8 +12,6 @@ import java.awt.Image;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
@@ -32,18 +19,24 @@ import javax.swing.ImageIcon;
 public class LogIn extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    //PANEL
     private JPanel contentPane;
+    
+    //TEXTFIELD
     private JTextField txtUserName;
     private JPasswordField txtPassword;
-    private JButton btnLogIn;
-    private LoginController loginController;
-    private JRadioButton rbtnShow;
+    
+    //BUTTON
+    private JButton btnLogIn; 
     private JButton btn;
+    private JRadioButton rbtnShow;
+
+    //CONTROLLER
+    private LoginController loginController = AppContext.getInstance().getLoginController();
     
 
     
     public LogIn() {
-        loginController = new LoginController();
         initialize();
     }
 
@@ -87,7 +80,6 @@ public class LogIn extends JFrame {
         contentPane.add(rbtnShow);
 
         JLabel logo = new JLabel();
-        // BINAGO: MainFrame na ang ginamit, hindi na AdminDash
         ImageIcon icon = new ImageIcon(
         MainFrame.class.getResource("/img/images__1_-removebg-preview.png"));
         Image img = icon.getImage();
@@ -110,48 +102,29 @@ public class LogIn extends JFrame {
           	mainFrame.setVisible(true);
           	this.dispose();          });
     	
-        btnLogIn.addActionListener(e -> handleLogin());
+        btnLogIn.addActionListener(e -> logIn());
 
-        rbtnShow.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (rbtnShow.isSelected()) {
-                    txtPassword.setEchoChar((char) 0);
-                } else {
-                    txtPassword.setEchoChar('*');
-                }
-            }
-        });
-    }
+        rbtnShow.addActionListener(e ->{ 
+        	 if (rbtnShow.isSelected()) {
+                 txtPassword.setEchoChar((char) 0);
+             } else {
+                 txtPassword.setEchoChar('*');
+             } });   
+    	}
 
-    private void handleLogin() {
-   	
-        String userName = txtUserName.getText().trim().replaceAll("\\s+", " ");
-        String password = new String(txtPassword.getPassword()).replaceAll("\\s+", " ");
+    private void logIn() {
+    	
+        String userName = txtUserName.getText();
+        String password = new String(txtPassword.getPassword());
 
-        if (userName.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                "Please fill in all fields.",
-                "Warning Po!", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
   try {
         boolean success = loginController.login(userName, password);
-
         if (success) {
-            JOptionPane.showMessageDialog(this,
-                "Login successful!",
-                "Success Po!",
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,"Login success!","Validated!",JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
-            // BINAGO: MainFrame na, hindi na AdminDash
-            MainFrame mainFrame = new MainFrame();
-            mainFrame.setVisible(true);
+            new MainFrame().setVisible(true);;
         } else {
-            JOptionPane.showMessageDialog(this,
-                "Invalid username or password.",
-                "Login Failed po",
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,"Invalid username or password.","Invalid!",JOptionPane.ERROR_MESSAGE);
         }
   }catch(RuntimeException e) {
 	  e.printStackTrace();
