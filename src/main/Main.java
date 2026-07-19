@@ -4,7 +4,8 @@ import java.awt.EventQueue;
 
 import controller.LoginController;
 import controller.AcquisitionModule.AcquisitionController;
-import controller.AcquisitionModule.AcquisitionTransactionController;
+import controller.AcquisitionModule.DeadLayer;
+import controller.AcquisitionModule.AcqusitionDetailController;
 import controller.AcquisitionModule.DonorController;
 import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
@@ -22,6 +23,7 @@ import controller.UserModule.StudentTab.StudentMaintenanceController;
 import dao.UserDAO;
 import dao.AcquisitionModule.AcquisitionDAO;
 import dao.AcquisitionModule.AcquisitionTransactionDAO;
+import dao.AcquisitionModule.AcqusitionDetailDAO;
 import dao.AcquisitionModule.DonorDAO;
 import dao.AcquisitionModule.SupplierDAO;
 import dao.BookModule.AuthorDAO;
@@ -39,6 +41,7 @@ import dao.UserModule.StudentTab.StudentMaintenanceDAO;
 import services.LoginServices;
 import services.AcquisitionModule.AcquisitionServices;
 import services.AcquisitionModule.AcquisitionTransactionServices;
+import services.AcquisitionModule.AcqusitionDetailServices;
 import services.AcquisitionModule.DonorServices;
 import services.AcquisitionModule.SupplierServices;
 import services.BookModule.AuthorServices;
@@ -54,26 +57,14 @@ import services.UserModule.StudentTab.GradeServices;
 import services.UserModule.StudentTab.SectionServices;
 import services.UserModule.StudentTab.StudentMaintenanceServices;
 import view.LogIn;
-import view.MainFrame;
 import utility.AppContext;
 
 public class Main {
-
-// learn App context, servie locator
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					
-//				AuthorDAO authorDao = new AuthorDAO();	
-//				AuthorController authorController = new AuthorController(authorDao);	
-//				
-// 				PublisherDAO publisherDao = new PublisherDAO();
-//				PublisherController publisherController = new PublisherController(publisherDao);
-//				
-//				CategoryDAO categoryDao = new CategoryDAO();
-//				CategoryController categoryController = new CategoryController(categoryDao);
 					
 			    AppContext ctx = AppContext.getInstance();
 			    ctx.setLoginController(new LoginController(new LoginServices(new UserDAO())));
@@ -92,8 +83,8 @@ public class Main {
 				ctx.setLibrarianMaintenanceController(new LibrarianMaintenanceController(new LibrarianMaintenanceServices(new LibrarianMaintenanceDAO())));
 				ctx.setCirculationController(new CirculationController(new CirculationServices(new CirculationDAO())));
 				ctx.setVisitLogController(new VisitLogController(new VisitLogServices(new VisitLogDAO())));
-				ctx.setAcquisitionTransactionController(new AcquisitionTransactionController(new AcquisitionTransactionServices(new AcquisitionTransactionDAO())));
-												 
+				ctx.setAcquisitionTransactionController(new DeadLayer(new AcquisitionTransactionServices(new AcquisitionTransactionDAO())));
+				ctx.setAcqusitionDetailController(new AcqusitionDetailController(new AcqusitionDetailServices(new AcqusitionDetailDAO())));						 
 
 				LogIn login = new LogIn();
 				login.setVisible(true);
@@ -106,4 +97,3 @@ public class Main {
 	
 }
 
-//no dependecy in AuthorDAO/Controller , for educational purpose only

@@ -1,7 +1,6 @@
 package view.InventoryModule.AcquisitionTab;
 
 import java.awt.Color;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -9,7 +8,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import controller.AcquisitionModule.AcquisitionController;
-import controller.BookModule.BookMaintenanceController;
+import model.AcqusitionModule.AcquisitionDisplay;
 import utility.AppContext;
 
 import javax.swing.JLabel;
@@ -19,9 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-public class AcquisitionAddEditForm extends JDialog {
+public class AcquisitionDetailView extends JDialog {
 	
-	private BookMaintenanceController bookMaintenanceController = AppContext.getInstance().getBookMaintenanceController();
 	private AcquisitionController acquisitionController = AppContext.getInstance().getAcquisitionController();
 
 
@@ -44,7 +42,6 @@ public class AcquisitionAddEditForm extends JDialog {
 	private JButton btnAdd;
 	private JButton btnSave;
 	private JButton btnFindBook;
-	private JButton btnFindContributor;
 	
 	//TABLE
 	private DefaultTableModel tblModel;
@@ -54,9 +51,14 @@ public class AcquisitionAddEditForm extends JDialog {
 	//SENTINEL
 	private int selectedBookId = -1;
 	private int selectedContributorId = -1;
+	private int selectedAcquisitionId = -1;
+
+	
 
 
-	public AcquisitionAddEditForm() {
+	public AcquisitionDetailView(int selecetedAcquisitionId) {
+		selectedAcquisitionId = selecetedAcquisitionId;
+		
 		execute() ;
 	}
 	
@@ -207,7 +209,7 @@ public class AcquisitionAddEditForm extends JDialog {
 		txtContributor = new JTextField();
 		txtContributor.setEditable(false);
 		txtContributor.setColumns(10);
-		txtContributor.setBounds(109, 51, 103, 20);
+		txtContributor.setBounds(109, 51, 174, 20);
 		borrowerPanel.add(txtContributor);
 		
 		JLabel lblContributorType = new JLabel("Type:");
@@ -251,13 +253,6 @@ public class AcquisitionAddEditForm extends JDialog {
 		btnAdd.setEnabled(true);
 		btnAdd.setBounds(200, 182, 83, 18);
 		borrowerPanel.add(btnAdd);
-		
-		btnFindContributor = new JButton("FIND");
-		btnFindContributor.setForeground(new Color(51, 102, 51));
-		btnFindContributor.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnFindContributor.setEnabled(true);
-		btnFindContributor.setBounds(215, 51, 68, 19);
-		borrowerPanel.add(btnFindContributor);
 		
 		textField = new JTextField();
 		textField.setColumns(10);
@@ -310,11 +305,15 @@ public class AcquisitionAddEditForm extends JDialog {
 	
 	public void initAction() {
 		
-		txtTransaction.setText(acquisitionController.generateNextTransactionNo());
+		AcquisitionDisplay acqui = acquisitionController.getTransactionNoById(selectedAcquisitionId);
+		txtTransaction.setText(acqui.getTransactionNo());
+		//txtContributor.setText(acqui.se);
 		
 		btnFindBook.addActionListener(e ->{		openBookDialog();    });
-		btnFindContributor.addActionListener(e -> {  openContributorDialog(); });
+		
 		btnAdd.addActionListener(e ->{  addBook();  });
+		
+	
 	}
 	
 	public void openBookDialog() {
@@ -359,6 +358,11 @@ public class AcquisitionAddEditForm extends JDialog {
 		}
 
 	}
+	
+	public void selectedTransactionId() {
+		
+	}
+	
 	
 	public void  addBook() {
 		

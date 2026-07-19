@@ -14,7 +14,7 @@ import java.util.Date;
 import javax.swing.border.LineBorder;
 
 import controller.AcquisitionModule.AcquisitionController;
-import controller.AcquisitionModule.AcquisitionTransactionController;
+import controller.AcquisitionModule.DeadLayer;
 import utility.AppContext;
 
 import javax.swing.JTextField;
@@ -23,7 +23,6 @@ import com.toedter.calendar.JDateChooser;
 public class AcquisitionAddTransaction extends JDialog {
 	
 	private AcquisitionController acquisitionController = AppContext.getInstance().getAcquisitionController();
-	private AcquisitionTransactionController acquisitionTransactionController = AppContext.getInstance().getAcquisitionTransactionController();
 
 
 
@@ -195,7 +194,7 @@ public class AcquisitionAddTransaction extends JDialog {
 	    	Date date = dateReceived.getDate();
 	    	
 			try {
-				acquisitionTransactionController.addAcqTransaction(transactionNo, id, contributorType , date);
+				acquisitionController.addAcqTransaction(transactionNo, id, contributorType , date);
 				JOptionPane.showMessageDialog(this, "Successfully added");
 				this.dispose();
 			}catch(Exception e) {

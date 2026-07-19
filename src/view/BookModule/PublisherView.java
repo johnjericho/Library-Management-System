@@ -137,13 +137,12 @@ public class PublisherView extends JDialog {
 		    String[] column = { "id", "Publisher" };
 		    tblModel = new DefaultTableModel(column, 0){
 		        public boolean isCellEditable(int row, int column) {
-		            return false; // hindi na maaari mag-edit ng kahit anong cell
+		            return false; 
 		        }	};
 			tblPublisher = new JTable(tblModel);
 			scrollPane.setViewportView(tblPublisher);
 			
 		
-			// itago ang ID column para hindi makita ng user
 			tblPublisher.getColumnModel().getColumn(0).setMinWidth(0);
 			tblPublisher.getColumnModel().getColumn(0).setMaxWidth(0);
 			tblPublisher.getColumnModel().getColumn(0).setWidth(0);
@@ -163,7 +162,6 @@ public class PublisherView extends JDialog {
 		
 		TableRefresherHelper.tblRefresher(3000, () ->{ loadPublisher(); });
 
-		//mouse selectionModel for update/delete function
 		tblPublisher.getSelectionModel().addListSelectionListener(e -> {
 		    if (e.getValueIsAdjusting()) return;
 
@@ -173,7 +171,6 @@ public class PublisherView extends JDialog {
 		        int id = (int) tblModel.getValueAt(selectedRow, 0);
 		        String name = (String) tblModel.getValueAt(selectedRow, 1);
 
-		        // ⭐ SAME PATTERN AS CATEGORY VIEW
 		        if (selectedPublisherId != id) {
 		            selectedPublisherId = id;
 		            txtPublisher.setText(name);
@@ -182,21 +179,20 @@ public class PublisherView extends JDialog {
 		    }
 		});
 		
-		//mouse listenert to Bookmaintenacview
 		 tblPublisher.addMouseListener(new MouseAdapter() {
 		        public void mouseClicked(MouseEvent e) {
-		            if (e.getClickCount() == 2) { // double-click = "pumili ako nito"
+		            if (e.getClickCount() == 2) { 
 		                int row = tblPublisher.getSelectedRow();
 		                if (row != -1) {
-		                	selectedPublisherName = tblPublisher.getValueAt(row, 1).toString(); // column 1 = author name, halimbawa
-		                    dispose(); // isasara ang dialog → bumabalik na control sa caller
+		                	selectedPublisherName = tblPublisher.getValueAt(row, 1).toString();
+		                    dispose(); 
 		                }
 		            }
 		        }
 		    });
 		
 		// ESC key
-				// Sa initAction() — globally nakikinig sa ESC kahit saan naka-focus
+			
 				getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
 				    .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escapeAction");
 
@@ -241,9 +237,9 @@ public class PublisherView extends JDialog {
 		}
 		
 		for(int i = 0; i < tblModel.getRowCount(); i++) {
-			int rowId = (int) tblModel.getValueAt(i, 0); //get the value each i ->row from 0 ->column id
+			int rowId = (int) tblModel.getValueAt(i, 0); 
 			if(rowId == selectedPublisherId) {
-				tblPublisher.setRowSelectionInterval(i, i); // from i selected row end to to also i, start -> end highlight 
+				tblPublisher.setRowSelectionInterval(i, i); 
 				break;
 			}
 		}
@@ -256,7 +252,7 @@ public class PublisherView extends JDialog {
 	    isEditMode = true;
 	    btnUpdate.setEnabled(true);
 	    btnDelete.setEnabled(true);
-	    btnAdd.setEnabled(false); // optional — para hindi makalito
+	    btnAdd.setEnabled(false); 
 	}
 
 	private void exitEditMode() {
@@ -269,9 +265,9 @@ public class PublisherView extends JDialog {
 	}
 	
 	private void tryExitEditMode() {
-	    if (!isEditMode) return; // wala namang edit mode, wala sa gagawin
+	    if (!isEditMode) return; 
 
-	    // hanapin ang original name sa table
+	  
 	    String originalName = "";
 	    for (int i = 0; i < tblModel.getRowCount(); i++) {
 	        if ((int) tblModel.getValueAt(i, 0) == selectedPublisherId) {
@@ -283,7 +279,6 @@ public class PublisherView extends JDialog {
 	    String currentText = txtPublisher.getText().trim();
 
 	    if (!currentText.equals(originalName)) {
-	        // may binago ang user — mag-prompt
 	        int confirm = JOptionPane.showConfirmDialog(
 	            this,
 	            "Discard changes?",
@@ -294,9 +289,7 @@ public class PublisherView extends JDialog {
 	            exitEditMode();
 	            tblPublisher.clearSelection();
 	        }
-	        // kung NO — manatili sa edit mode, walang mangyayari
 	    } else {
-	        // walang binago — exit agad, walang prompt
 	        exitEditMode();
 	        tblPublisher.clearSelection();
 	    }
@@ -364,20 +357,16 @@ public class PublisherView extends JDialog {
 	 
 	 public void searchPublisher(){
 		   
-		    // kunin ang text sa search box, alisin ang extra spaces
 		    String keyword = txtSearch.getText().trim();
 		    if(!keyword.isEmpty()) TableRefresherHelper.stopRefresher();
 		    else TableRefresherHelper.startRefresher();
 		    
-		    // i-clear muna ang table bago mag-load ng bagong results
 		    tblModel.setRowCount(0);
       try {
-		    // kung walang keyword → load lahat, may keyword → i-filter
 		    ArrayList<Publisher> list = keyword.isEmpty()
-		        ? publisherController.loadPublisher()       // walang keyword, load all
-		        : publisherController.searchPublisher(keyword); // may keyword, i-filter
+		        ? publisherController.loadPublisher()     
+		        : publisherController.searchPublisher(keyword); 
 
-		    // i-loop ang results at idagdag sa table row by row
 		    for (Publisher a : list) {
 		        tblModel.addRow(new Object[]{a.getPublisherId(), a.getPublisherName()});
 		    }

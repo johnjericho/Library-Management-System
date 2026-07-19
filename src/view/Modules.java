@@ -19,16 +19,11 @@ public class Modules extends JPanel {
     private JButton btnDashboard;
     private JButton btnFileMaintenance;
     private JButton btnCirculation;
-    // BINAGO: AdminDash → MainFrame na ang reference
     private MainFrame mainFrame;
     private JButton btnInventory;
     private JButton btnUserMaintenance;
     private JButton btnAuditTrail;
 
-    // BAGO: Panatilihing instance fields ang bawat View — isang beses lang gagawin
-    // (sa initViews()), sa halip na "new" kada click ng sidebar button.
-    // Dito nakadepende ang pagpapanatili ng state (currentTransactionNo,
-    // laman ng textfields, table data, atbp.) tuwing lumipat-lipat ng module.
     private DashboardView dashboardView;
     private CirculationView circulationView;
     private BookMaintenanceView bookMaintenanceView;
@@ -37,11 +32,10 @@ public class Modules extends JPanel {
     private InventoryView inventoryView;
     private JButton btnLogout;
 
-    // BINAGO: AdminDash → MainFrame na ang parameter
     public Modules(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setPanel();
-        initViews();   // BAGO: gawin lahat ng Views dito, isang beses lang
+        initViews(); 
         initAction();
     }
 
@@ -92,10 +86,7 @@ public class Modules extends JPanel {
         add(btnLogout);
     }
 
-    // BAGO: lahat ng Views ay ginagawa dito, ISANG BESES lang.
-    // Kaya kahit ilang beses ka pang lumipat ng module, hindi na sila
-    // mare-recreate — mananatili ang laman ng fields, table data, at
-    // currentTransactionNo (sa Acquisition) hangga't hindi sinasara ang app.
+
     private void initViews() {
         dashboardView = new DashboardView();
         circulationView = new CirculationView(mainFrame);
@@ -104,17 +95,13 @@ public class Modules extends JPanel {
         inventoryView = new InventoryView(mainFrame);
         acquisitionView = new AcquisitionView(mainFrame);
         
-        // BAGO: i-link pagkatapos ma-construct ang dalawa (walang "new" sa loob ng constructor,
-        // kaya walang circular recursion)
         inventoryView.setAcquisitionView(acquisitionView);
         acquisitionView.setInventoryView(inventoryView);
 
     }
 
     public void initAction() {
-        // BINAGO: mainFrame na ang ginagamit, hindi na adminDash
-        // BINAGO: existing instance na lang ang ipinapasa sa showPanel(),
-        // hindi na gumagawa ng bago kada click
+      
         btnDashboard.addActionListener(e ->
             mainFrame.showPanel(dashboardView));
 

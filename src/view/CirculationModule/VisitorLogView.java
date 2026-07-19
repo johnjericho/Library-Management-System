@@ -126,9 +126,6 @@ public class VisitorLogView extends JPanel {
 
 		String[] column = {"Visit ID", "BORROWER ID", "FULL NAME", "TIME IN", "TIME OUT"};
 		tblModel = new DefaultTableModel(column, 0) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}

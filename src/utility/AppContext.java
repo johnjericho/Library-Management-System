@@ -2,7 +2,8 @@ package utility;
 
 import controller.LoginController;
 import controller.AcquisitionModule.AcquisitionController;
-import controller.AcquisitionModule.AcquisitionTransactionController;
+import controller.AcquisitionModule.DeadLayer;
+import controller.AcquisitionModule.AcqusitionDetailController;
 import controller.AcquisitionModule.DonorController;
 import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
@@ -40,7 +41,8 @@ public class AppContext {
     private LibrarianMaintenanceController librarianMaintenanceController;
     private CirculationController circulationController;
     private VisitLogController visitLogController;
-    private AcquisitionTransactionController acquisitionTransactionController;
+    private DeadLayer acquisitionTransactionController;
+    private AcqusitionDetailController acqusitionDetailController;
 
 
 	private AppContext() {}
@@ -70,8 +72,9 @@ public class AppContext {
     public LibrarianMaintenanceController getLibrarianMaintenanceController() {return librarianMaintenanceController; }
     public  CirculationController getCirculationController() { return  circulationController;  }
     public VisitLogController getVisitLogController() {	return visitLogController; }
-	public AcquisitionTransactionController getAcquisitionTransactionController() {return acquisitionTransactionController; }
-    
+	public DeadLayer getAcquisitionTransactionController() {return acquisitionTransactionController; }
+	public AcqusitionDetailController getAcqusitionDetailController() {return acqusitionDetailController; }
+
 
 
 
@@ -93,7 +96,8 @@ public class AppContext {
 	public void setLibrarianMaintenanceController(LibrarianMaintenanceController librarianMaintenanceController) { this.librarianMaintenanceController = librarianMaintenanceController; }
     public void setCirculationController( CirculationController circulationController) { this.circulationController = circulationController; }
 	public void setVisitLogController(VisitLogController visitLogController) {	this.visitLogController = visitLogController; }
-	public void setAcquisitionTransactionController(AcquisitionTransactionController acquisitionTransactionController) {this.acquisitionTransactionController = acquisitionTransactionController; }
+	public void setAcquisitionTransactionController(DeadLayer acquisitionTransactionController) {this.acquisitionTransactionController = acquisitionTransactionController; }
+	public void setAcqusitionDetailController(AcqusitionDetailController acqusitionDetailController) {this.acqusitionDetailController = acqusitionDetailController;}
 
 
 

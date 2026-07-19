@@ -28,7 +28,7 @@ import javax.swing.JTable;
 
 
 import controller.AcquisitionModule.AcquisitionController;
-import model.dto.AcquisitionDisplay;
+import model.AcqusitionModule.AcquisitionDisplay;
 import utility.AppContext;
 import view.MainFrame;
 import view.InventoryModule.InventoryTab.InventoryView;
@@ -51,7 +51,7 @@ public class AcquisitionView extends JPanel {
 	private AcquisitionController acquisitionController = AppContext.getInstance().getAcquisitionController();
 
 	private int selectedAcquisitionId = -1;
-	private String currentTransactionNo;
+	private String currentTransactionNo = "";
 	private JButton btnInventory;
 	private JButton btnAcquisition;
 	private JPanel componentsBorder_1;
@@ -159,32 +159,23 @@ public class AcquisitionView extends JPanel {
 		loadAcquisition();
 
 		tblAcquisition.addMouseListener(new MouseAdapter() {
-
-		    @Override
 		    public void mouseClicked(MouseEvent e) {
 		    	
 				int selectedRow = tblAcquisition.getSelectedRow();
-					if(selectedRow != -1) {					
+				
+					if(selectedRow != -1) {	
+						
+						int selectedId = (int) tblModel.getValueAt(selectedRow, 0);
+						
 						 if (e.getClickCount() == 2) { 
 							 
-							 AcquisitionAddEditForm acquisitionAddEditForm = new AcquisitionAddEditForm();
+							 AcquisitionDetailView acquisitionAddEditForm = new AcquisitionDetailView(selectedId);
 							 acquisitionAddEditForm.setModal(true);
 							 acquisitionAddEditForm.setVisible(true);
 							 
 				        	} } } });
 
-		tblAcquisition.getSelectionModel().addListSelectionListener(e -> {
-			if (e.getValueIsAdjusting()) return;
-			int selectedRow = tblAcquisition.getSelectedRow();
 
-			if (selectedRow != -1) {
-				int id = (int) tblModel.getValueAt(selectedRow, 0); 
-				if (id != selectedAcquisitionId) {
-					selectedAcquisitionId = id;
- 
-				}
-			}
-		});
 
 		txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 			public void insertUpdate(javax.swing.event.DocumentEvent e) { searchAcquisition(); }
@@ -207,6 +198,8 @@ public class AcquisitionView extends JPanel {
 			}
 		}
 	}
+
+	
 
 
 	public void addTransaction() {

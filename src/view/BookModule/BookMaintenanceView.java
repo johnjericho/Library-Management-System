@@ -189,7 +189,7 @@ public class BookMaintenanceView extends JPanel {
         bookDatePublished = new JDateChooser();
         JTextField textField = (JTextField) bookDatePublished.getDateEditor().getUiComponent();
         textField.setEditable(false);
-        bookDatePublished.setMaxSelectableDate(new Date()); // Hindi pwede pumili ng future date
+        bookDatePublished.setMaxSelectableDate(new Date());
         bookDatePublished.setBounds(685, 108, 191, 20);
         componentsBorder.add(bookDatePublished);
         
@@ -282,10 +282,9 @@ public class BookMaintenanceView extends JPanel {
     		TableRefresherHelper.stopRefresher();
     		
     		AuthorView authorView = new AuthorView();
-    		authorView.setModal(true); // important , need to close the pop window , before accessing ng main window
+    		authorView.setModal(true);
     		authorView.setVisible(true);
     		
-    		  // pagdating dito, ibig sabihin nadispose na si author (may napili o nag-cancel)
     	    String selectedAuthorName = authorView.getSelectedAuthorName();
     	      selectedAuthorId = authorView.getSelectedAuthorId();
     	    if (selectedAuthorName != null) {
@@ -342,7 +341,7 @@ public class BookMaintenanceView extends JPanel {
     	
     	
     	tblBook.getSelectionModel().addListSelectionListener(e ->{
-    		if(e.getValueIsAdjusting()) return; //mouse is long press
+    		if(e.getValueIsAdjusting()) return;
     		int selectedRow = tblBook.getSelectedRow();
     		
     		if(selectedRow != -1) {
@@ -392,7 +391,6 @@ public class BookMaintenanceView extends JPanel {
     	});
     	
     	// ESC key
-    	// Sa initAction() — naka-scoped sa loob ng BookMaintenanceView panel lang
     	this.getInputMap(javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
     	    .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), "escapeAction");
 
