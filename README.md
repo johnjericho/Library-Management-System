@@ -11,22 +11,17 @@ A desktop-based Library Management System designed to manage library operations 
 
 ## Architecture
 Implemented using a Layered Architecture:
-- View Layer
-- Controller Layer
+- MVC Layer
 - Service Layer
 - DAO Layer
-- Database Layer
+- Utility Layer
 
 ## Technologies Used
 - Java
 - Java Swing
-- MySQL
+- MySQL (XAMPP)
 - JDBC
 - Eclipse IDE
-
-## Dependencies / Libraries
-- MySQL Connector/J for database connectivity
-- Java Swing for user interface development
 
 ## Project Status
 Currently under development. Core modules are functional, while additional improvements and features are still being implemented.
