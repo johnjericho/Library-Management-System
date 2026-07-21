@@ -1,4 +1,4 @@
-Library Management System
+# Library Management System
 
 A desktop-based Library Management System designed to manage library operations such as book records, borrower information, circulation, inventory, and visitor monitoring.
 
