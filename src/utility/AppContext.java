@@ -2,9 +2,8 @@ package utility;
 
 import controller.LoginController;
 import controller.AcquisitionModule.AcquisitionController;
-import controller.AcquisitionModule.DeadLayer;
-import controller.AcquisitionModule.AcqusitionDetailController;
 import controller.AcquisitionModule.DonorController;
+import controller.AcquisitionModule.InventoryController;
 import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
 import controller.BookModule.BookMaintenanceController;
@@ -41,8 +40,7 @@ public class AppContext {
     private LibrarianMaintenanceController librarianMaintenanceController;
     private CirculationController circulationController;
     private VisitLogController visitLogController;
-    private DeadLayer acquisitionTransactionController;
-    private AcqusitionDetailController acqusitionDetailController;
+    private InventoryController inventoryController;
 
 
 	private AppContext() {}
@@ -72,8 +70,9 @@ public class AppContext {
     public LibrarianMaintenanceController getLibrarianMaintenanceController() {return librarianMaintenanceController; }
     public  CirculationController getCirculationController() { return  circulationController;  }
     public VisitLogController getVisitLogController() {	return visitLogController; }
-	public DeadLayer getAcquisitionTransactionController() {return acquisitionTransactionController; }
-	public AcqusitionDetailController getAcqusitionDetailController() {return acqusitionDetailController; }
+    public InventoryController getInventoryController() {return inventoryController;}
+
+
 
 
 
@@ -96,8 +95,7 @@ public class AppContext {
 	public void setLibrarianMaintenanceController(LibrarianMaintenanceController librarianMaintenanceController) { this.librarianMaintenanceController = librarianMaintenanceController; }
     public void setCirculationController( CirculationController circulationController) { this.circulationController = circulationController; }
 	public void setVisitLogController(VisitLogController visitLogController) {	this.visitLogController = visitLogController; }
-	public void setAcquisitionTransactionController(DeadLayer acquisitionTransactionController) {this.acquisitionTransactionController = acquisitionTransactionController; }
-	public void setAcqusitionDetailController(AcqusitionDetailController acqusitionDetailController) {this.acqusitionDetailController = acqusitionDetailController;}
+	public void setInventoryController(InventoryController inventoryController) {	this.inventoryController = inventoryController;}
 
 
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import model.AcqusitionModule.Acquisition;
+import model.AcqusitionModule.AcquisitionDetail;
 import model.AcqusitionModule.AcquisitionDisplay;
 import services.AcquisitionModule.AcquisitionServices;
 
@@ -27,12 +28,21 @@ public class AcquisitionController {
 		return acquServices.loadAcquisition();
 	}
 	
-	public AcquisitionDisplay getTransactionNoById(int selectedAcquisitionId) {
+	public AcquisitionDisplay getTransactionDetailsById(int selectedAcquisitionId) {
 		return acquServices.getAcquisitionDisplayById(selectedAcquisitionId);
 	}
 
 	public ArrayList<AcquisitionDisplay> searchAcquisition(String keyword) {
 		return acquServices.searchAcquisition(keyword);
 	}
+	
+	
+	//ACQUISITION DETAIL
+	
+	public void saveAcquisitionWithInventory(ArrayList<AcquisitionDetail> bookDetails) {
+	    acquServices.saveAcquisitionWithInventory(bookDetails);
+	}
+
+	
 	
 }

@@ -30,7 +30,7 @@ import controller.AcquisitionModule.SupplierController;
 import model.dto.ContributorDisplay;
 import model.BookModule.Supplier;
 import utility.AppContext;
-// TODO: adjust package kung saan talaga nakalagay ang Donor model mo
+import model.AcqusitionModule.AcquisitionDetail;
 import model.BookModule.Donor;
 
 public class ContributorDialogPicker extends JDialog {

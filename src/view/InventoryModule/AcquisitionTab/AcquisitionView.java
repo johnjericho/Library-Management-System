@@ -1,12 +1,3 @@
-
-/*
- * TODO  ayusin ung ung selected state sa table sa table
- * Problem : hnd nakukuha ang value ng selected row , at hnd na iistore sa textfield sa popForm
- */
-
-
-
-
 package view.InventoryModule.AcquisitionTab;
 
 import javax.swing.JPanel;
@@ -48,10 +39,11 @@ public class AcquisitionView extends JPanel {
 	private JScrollPane scrollPane;
 	private JButton btnAdd;
 
+	//CONTROLLER
 	private AcquisitionController acquisitionController = AppContext.getInstance().getAcquisitionController();
 
+	
 	private int selectedAcquisitionId = -1;
-	private String currentTransactionNo = "";
 	private JButton btnInventory;
 	private JButton btnAcquisition;
 	private JPanel componentsBorder_1;

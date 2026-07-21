@@ -1,30 +1,39 @@
 package view.InventoryModule.AcquisitionTab;
 
 import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import controller.AcquisitionModule.AcquisitionController;
+import model.AcqusitionModule.AcquisitionDetail;
 import model.AcqusitionModule.AcquisitionDisplay;
 import utility.AppContext;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import java.awt.Font;
+import java.util.ArrayList;
+
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+
 public class AcquisitionDetailView extends JDialog {
 	
-	private AcquisitionController acquisitionController = AppContext.getInstance().getAcquisitionController();
-
-
+	//CONTAINER
 	private static final long serialVersionUID = 1L;
 	private  JPanel contentPanel = new JPanel();
+	
 	//TEXTFIELDS
 	private JTextField txtIsbn;
 	private JTextField txtTitle;
@@ -36,7 +45,7 @@ public class AcquisitionDetailView extends JDialog {
 	private JTextField txtQuantity;
 	private JTextField txtPrice;
 	private JTextField txtPublisher;
-	private JTextField textField;
+	private JTextField txtSearch;
 	
 	//BUTTON
 	private JButton btnAdd;
@@ -49,11 +58,15 @@ public class AcquisitionDetailView extends JDialog {
 	private JScrollPane scrollPane;
 
 	//SENTINEL
-	private int selectedBookId = -1;
-	private int selectedContributorId = -1;
 	private int selectedAcquisitionId = -1;
+	private int selectedBookId = -1;
 
 	
+	//ARRAYS
+	ArrayList<AcquisitionDetail> selectedbookList = new ArrayList<>();
+	
+	//CONTROLLER
+	private AcquisitionController acquisitionController = AppContext.getInstance().getAcquisitionController();
 
 
 	public AcquisitionDetailView(int selecetedAcquisitionId) {
@@ -246,6 +259,7 @@ public class AcquisitionDetailView extends JDialog {
 		txtPrice.setBounds(109, 135, 174, 20);
 		borrowerPanel.add(txtPrice);
 		
+		
 		btnAdd = new JButton("ADD");
 
 		btnAdd.setForeground(new Color(51, 102, 51));
@@ -254,10 +268,10 @@ public class AcquisitionDetailView extends JDialog {
 		btnAdd.setBounds(200, 182, 83, 18);
 		borrowerPanel.add(btnAdd);
 		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(550, 298, 179, 20);
-		contentPanel.add(textField);
+		txtSearch = new JTextField();
+		txtSearch.setColumns(10);
+		txtSearch.setBounds(550, 298, 179, 20);
+		contentPanel.add(txtSearch);
 		
 		JLabel lblSearch = new JLabel("Search");
 		lblSearch.setOpaque(true);
@@ -279,14 +293,15 @@ public class AcquisitionDetailView extends JDialog {
 		contentPanel.add(panel);
 		panel.setLayout(null);
 		
-		String[] column = {"BOOK TITLE", "QUANTITY","UNIT PRICE","TOTAL"};
+		String[] column = {"BOOK ID","BOOK TITLE", "QUANTITY","UNIT PRICE","TOTAL","ACTION"};
 		tblModel = new DefaultTableModel(column, 0) {
 			public boolean isCellEditable(int row, int column) {
-				return false;
+				 return column == 5;
 			}
 		};
-		
+				
 		tblAcquItem = new JTable(tblModel);
+		
 		
 		scrollPane = new JScrollPane(tblAcquItem);
 		scrollPane.setBounds(10, 22, 714, 210);
@@ -299,25 +314,33 @@ public class AcquisitionDetailView extends JDialog {
 		lblGrandTotal.setBounds(10, 238, 96, 14);
 		panel.add(lblGrandTotal);
 		
+		tblAcquItem.getColumnModel().getColumn(0).setMinWidth(0);
+		tblAcquItem.getColumnModel().getColumn(0).setMaxWidth(0);
+		tblAcquItem.getColumnModel().getColumn(0).setWidth(0);
 		
-		
+		tblAcquItem.getColumnModel().getColumn(5).setCellRenderer(new ActionCellRenderer());
+		tblAcquItem.getColumnModel().getColumn(5).setCellEditor(new ActionCellEditor());
+				
 	}
 	
 	public void initAction() {
 		
-		AcquisitionDisplay acqui = acquisitionController.getTransactionNoById(selectedAcquisitionId);
+		AcquisitionDisplay acqui = acquisitionController.getTransactionDetailsById(selectedAcquisitionId);
 		txtTransaction.setText(acqui.getTransactionNo());
-		//txtContributor.setText(acqui.se);
+		txtContributor.setText(acqui.getContributorName());
+		txtContributorType.setText(acqui.getContributorType());	
+		if(acqui.getContributorType().equals("Donor")) txtPrice.setEditable(false);	
 		
-		btnFindBook.addActionListener(e ->{		openBookDialog();    });
+		btnFindBook.addActionListener(e ->{	openBookDialog();    });
 		
 		btnAdd.addActionListener(e ->{  addBook();  });
 		
-	
+		btnSave.addActionListener(e -> saveAllBook());
+		
 	}
 	
 	public void openBookDialog() {
-		BookDialogPicker bookList = new BookDialogPicker();
+		BookDialogPicker bookList = new BookDialogPicker(selectedbookList);
 		bookList.setModal(true);
 		bookList.setVisible(true);
 		
@@ -331,42 +354,178 @@ public class AcquisitionDetailView extends JDialog {
 			String selectedBookPublisher = bookList.getSelectedBookPublisher();
 			String selectedBookCategory = bookList.getSelectedBookCategory();
 			
+			//User View
 			txtIsbn.setText(selectedBookIsbn);
 			txtTitle.setText(selectedTitle);
 			txtAuthor.setText(selectedBookAuthor);
 			txtPublisher.setText(selectedBookPublisher);
 			txtCategory.setText(selectedBookCategory);
+			
+					
 		}
 			
 	}
 	
 	
-	public void openContributorDialog() {
-		ContributorDialogPicker contributorDialogPicker = new ContributorDialogPicker();
-		contributorDialogPicker.setModal(true);
-		contributorDialogPicker.setVisible(true);
-		
-		selectedContributorId = contributorDialogPicker.getSelectedContributorId();
-		
-		if(selectedContributorId != -1) {
-			String contributor = contributorDialogPicker.getSelectedContributorName();
-			String type = contributorDialogPicker.getSelectedContributorType();
-			
-			txtContributor.setText(contributor);
-			txtContributorType.setText(type);
-			
-		}
+	public void addBook() {
 
+	    if (selectedBookId == -1) {
+	        JOptionPane.showMessageDialog(this, "Please select a book.", "Warning", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+
+	    String qtyText = txtQuantity.getText().trim();
+	    String priceText = txtPrice.getText().trim();
+	    boolean isDonor = txtContributorType.getText().trim().equalsIgnoreCase("Donor");
+
+	    if (qtyText.isEmpty()) {
+	        JOptionPane.showMessageDialog(this, "Quantity must not be empty.", "Warning", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+
+	    if (!isDonor && priceText.isEmpty()) {
+	        JOptionPane.showMessageDialog(this, "Price must not be empty.", "Warning", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+
+	    int quantity;
+	    double price;
+
+	    try {
+	        quantity = Integer.parseInt(qtyText);
+	    } catch (NumberFormatException ex) {
+	        JOptionPane.showMessageDialog(this, "Quantity must be a valid number.", "Warning", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+
+	    if (isDonor) {
+	        price = 0.0;
+	    } else {
+	        try {
+	            price = Double.parseDouble(priceText);
+	        } catch (NumberFormatException ex) {
+	            JOptionPane.showMessageDialog(this, "Price must be a valid number.", "Warning", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	    }
+
+
+	    int acquisitionId = selectedAcquisitionId;
+	    int bookId = selectedBookId;
+	    String bookTitle = txtTitle.getText();
+	    double total = Math.round(quantity * price * 100.0) / 100.0;
+
+	    AcquisitionDetail detail = new AcquisitionDetail(acquisitionId, bookId, quantity, price);
+	    selectedbookList.add(detail);
+
+	    tblModel.addRow(new Object[] {
+	        bookId,
+	        bookTitle,
+	        quantity,
+	        price,
+	        "$ " + total,
+	        "Remove"
+	    });
+	    clearFields();
 	}
 	
-	public void selectedTransactionId() {
+	public void clearFields() {
+		selectedBookId = -1;
+		
+		txtIsbn.setText("");
+		txtTitle.setText("");
+		txtAuthor.setText("");
+		txtCategory.setText("");
+		txtPublisher.setText("");
+		txtPrice.setText("");
+		txtQuantity.setText("");
 		
 	}
 	
-	
-	public void  addBook() {
-		
+	public void saveAllBook() {
+	    try {
+	        acquisitionController.saveAcquisitionWithInventory(selectedbookList);
+	        JOptionPane.showMessageDialog(this, "Successfully saved!");
+	        dispose();
+	    } catch( Exception e) {
+	        JOptionPane.showMessageDialog(this, e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+	    } 
 	}
+	
+	
+	
+	// ---------- action column renderer/editor ----------
+
+	//render
+	class ActionCellRenderer extends JPanel implements TableCellRenderer {
+
+	    private JButton btnRemove = new JButton("Remove");
+
+	    public ActionCellRenderer() {
+
+	        this.setLayout(null);
+	        btnRemove.setBounds(30, 1, 80, 13);
+	        btnRemove.setForeground(Color.RED);
+
+	        add(btnRemove);
+	    }
+
+	    @Override
+	    public Component getTableCellRendererComponent(JTable table,
+	            Object value,
+	            boolean isSelected,
+	            boolean hasFocus,
+	            int row,
+	            int column) {
+
+	        return this;
+	    }
+	}
+
+	//fuction
+	class ActionCellEditor extends AbstractCellEditor implements TableCellEditor {
+
+	    private JPanel panel = new JPanel();
+	    private JButton btnRemove = new JButton("Remove");
+
+	    private int currentRow;
+
+	    public ActionCellEditor() {
+
+	        panel.setLayout(null);
+	        btnRemove.setBounds(30, 1, 80, 13);
+	        btnRemove.setForeground(Color.RED);
+	        panel.add(btnRemove);
+
+	        btnRemove.addActionListener(e -> {
+
+	            fireEditingStopped();
+	            selectedbookList.remove(currentRow);
+	            tblModel.removeRow(currentRow);
+	            clearFields();
+
+	        });
+	    }
+
+	    @Override
+	    public Component getTableCellEditorComponent(
+	            JTable table,
+	            Object value,
+	            boolean isSelected,
+	            int row,
+	            int column) {
+
+	        currentRow = row;
+
+	        return panel;
+	    }
+
+	    @Override
+	    public Object getCellEditorValue() {
+	        return "";
+	    }
+	}
+	
 	
 	
 	

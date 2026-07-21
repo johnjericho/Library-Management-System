@@ -14,7 +14,6 @@ import java.util.Date;
 import javax.swing.border.LineBorder;
 
 import controller.AcquisitionModule.AcquisitionController;
-import controller.AcquisitionModule.DeadLayer;
 import utility.AppContext;
 
 import javax.swing.JTextField;
@@ -198,7 +197,6 @@ public class AcquisitionAddTransaction extends JDialog {
 				JOptionPane.showMessageDialog(this, "Successfully added");
 				this.dispose();
 			}catch(Exception e) {
-				e.printStackTrace();
 				JOptionPane.showMessageDialog(this, e.getMessage(),"Warning", JOptionPane.WARNING_MESSAGE);
 			}
 		}

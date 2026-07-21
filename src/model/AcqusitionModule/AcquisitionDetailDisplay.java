@@ -1,78 +1,80 @@
 package model.AcqusitionModule;
 
-import java.util.Date;
-
 public class AcquisitionDetailDisplay {
 
-	private int detailId;
-	private String transactionNo;
-	private String contributorName;
-	private String contributorType;
-	private Date dateAquired;
-	
-	
-	public AcquisitionDetailDisplay(int detailId, String transactionNo, String contributorName, String contributorType,
-			Date dateAquired) {
-		super();
-		this.detailId = detailId;
-		this.transactionNo = transactionNo;
-		this.contributorName = contributorName;
-		this.contributorType = contributorType;
-		this.dateAquired = dateAquired;
-	}
+    private int detailId;      // -1 kung hindi pa naiimbak sa DB, actual PK kung existing
+    private int bookId;
+    private String bookIsbn;
+    private String bookTitle;
+    private int quantity;
+    private double price;
 
+    public AcquisitionDetailDisplay(int bookId, String bookTitle, int quantity, double price) {}
+    
+    public AcquisitionDetailDisplay(int detailId, int bookId, String bookIsbn,
+            String bookTitle, int quantity, double price) {
+        this.detailId = detailId;
+        this.bookId = bookId;
+        this.bookIsbn = bookIsbn;
+        this.bookTitle = bookTitle;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public double getTotal() {
+        return quantity * price;
+    }
 
 	public int getDetailId() {
 		return detailId;
 	}
 
-
-	public String getTransactionNo() {
-		return transactionNo;
+	public int getBookId() {
+		return bookId;
 	}
 
-
-	public String getContributorName() {
-		return contributorName;
+	public String getBookIsbn() {
+		return bookIsbn;
 	}
 
-
-	public String getContributorType() {
-		return contributorType;
+	public String getBookTitle() {
+		return bookTitle;
 	}
 
-
-	public Date getDateAquired() {
-		return dateAquired;
+	public int getQuantity() {
+		return quantity;
 	}
 
+	public double getPrice() {
+		return price;
+	}
 
 	public void setDetailId(int detailId) {
 		this.detailId = detailId;
 	}
 
-
-	public void setTransactionNo(String transactionNo) {
-		this.transactionNo = transactionNo;
+	public void setBookId(int bookId) {
+		this.bookId = bookId;
 	}
 
-
-	public void setContributorName(String contributorName) {
-		this.contributorName = contributorName;
+	public void setBookIsbn(String bookIsbn) {
+		this.bookIsbn = bookIsbn;
 	}
 
-
-	public void setContributorType(String contributorType) {
-		this.contributorType = contributorType;
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 
-
-	public void setDateAquired(Date dateAquired) {
-		this.dateAquired = dateAquired;
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
-	
-	
-	
-	
-	
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+    
+    
+    
+    
 }

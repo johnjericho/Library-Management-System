@@ -4,9 +4,8 @@ import java.awt.EventQueue;
 
 import controller.LoginController;
 import controller.AcquisitionModule.AcquisitionController;
-import controller.AcquisitionModule.DeadLayer;
-import controller.AcquisitionModule.AcqusitionDetailController;
 import controller.AcquisitionModule.DonorController;
+import controller.AcquisitionModule.InventoryController;
 import controller.AcquisitionModule.SupplierController;
 import controller.BookModule.AuthorController;
 import controller.BookModule.BookMaintenanceController;
@@ -22,9 +21,8 @@ import controller.UserModule.StudentTab.SectionController;
 import controller.UserModule.StudentTab.StudentMaintenanceController;
 import dao.UserDAO;
 import dao.AcquisitionModule.AcquisitionDAO;
-import dao.AcquisitionModule.AcquisitionTransactionDAO;
-import dao.AcquisitionModule.AcqusitionDetailDAO;
 import dao.AcquisitionModule.DonorDAO;
+import dao.AcquisitionModule.InventoryDAO;
 import dao.AcquisitionModule.SupplierDAO;
 import dao.BookModule.AuthorDAO;
 import dao.BookModule.BookMaintenanceDAO;
@@ -40,9 +38,8 @@ import dao.UserModule.StudentTab.SectionDAO;
 import dao.UserModule.StudentTab.StudentMaintenanceDAO;
 import services.LoginServices;
 import services.AcquisitionModule.AcquisitionServices;
-import services.AcquisitionModule.AcquisitionTransactionServices;
-import services.AcquisitionModule.AcqusitionDetailServices;
 import services.AcquisitionModule.DonorServices;
+import services.AcquisitionModule.InventoryServices;
 import services.AcquisitionModule.SupplierServices;
 import services.BookModule.AuthorServices;
 import services.BookModule.BookMaintenanceServices;
@@ -64,8 +61,10 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
-					
+				
+				//ARCHITECURE
+				InventoryDAO inv = new InventoryDAO();	
+								
 			    AppContext ctx = AppContext.getInstance();
 			    ctx.setLoginController(new LoginController(new LoginServices(new UserDAO())));
 			    ctx.setAuthorController(new AuthorController(new AuthorServices(new AuthorDAO())));
@@ -74,7 +73,6 @@ public class Main {
 			    ctx.setSupplierController(new SupplierController(new SupplierServices(new SupplierDAO())));
 			    ctx.setDonorController(new DonorController(new DonorServices(new DonorDAO())));
 			    ctx.setBookMaintenanceController(new BookMaintenanceController(new BookMaintenanceServices(new BookMaintenanceDAO())));
-				ctx.setAcquisitionController(new AcquisitionController(new AcquisitionServices(new AcquisitionDAO())));
 				ctx.setDepartmentController(new DepartmentController(new DepartmentServices(new DepartmentDAO())));
 				ctx.setGradeController(new GradeController(new GradeServices(new GradeDAO())));
 				ctx.setSectionController(new SectionController(new SectionServices(new SectionDAO())));
@@ -83,8 +81,9 @@ public class Main {
 				ctx.setLibrarianMaintenanceController(new LibrarianMaintenanceController(new LibrarianMaintenanceServices(new LibrarianMaintenanceDAO())));
 				ctx.setCirculationController(new CirculationController(new CirculationServices(new CirculationDAO())));
 				ctx.setVisitLogController(new VisitLogController(new VisitLogServices(new VisitLogDAO())));
-				ctx.setAcquisitionTransactionController(new DeadLayer(new AcquisitionTransactionServices(new AcquisitionTransactionDAO())));
-				ctx.setAcqusitionDetailController(new AcqusitionDetailController(new AcqusitionDetailServices(new AcqusitionDetailDAO())));						 
+				ctx.setAcquisitionController(new AcquisitionController(new AcquisitionServices(new AcquisitionDAO(), inv)));
+				ctx.setInventoryController(new InventoryController(new InventoryServices(new InventoryDAO())));
+
 
 				LogIn login = new LogIn();
 				login.setVisible(true);

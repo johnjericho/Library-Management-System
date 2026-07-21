@@ -1,20 +1,15 @@
 package view.InventoryModule.AcquisitionTab;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import controller.BookModule.BookMaintenanceController;
+import model.AcqusitionModule.AcquisitionDetail;
 import model.dto.BookDisplay;
 import utility.AppContext;
 import utility.TableRefresherHelper;
@@ -30,20 +25,26 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 public class BookDialogPicker extends JDialog {
 
+	//CONTAINER
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
+	
+	
+	//CONTROLLER
+	private BookMaintenanceController bookMaintenanceController = AppContext.getInstance().getBookMaintenanceController();
+		
+	//TEXTFIELD
 	private JTextField txtSearch;	
+	
+	//TABLE
 	private DefaultTableModel tblModel;
 	private JTable tblBookRecord;
 	private JScrollPane scrollPane;
 	
-	//outside class connection
-	private BookMaintenanceController bookMaintenanceController = AppContext.getInstance().getBookMaintenanceController();
-	
+	//SENTINEL
 	private int selectedBookId = -1;
 	private String selectedBookIsbn = "";
 	private String selectedBookTitle;
@@ -51,8 +52,11 @@ public class BookDialogPicker extends JDialog {
 	private String selectedBookPublisher = "";
 	private String selectedBookCategory = "";
 	
+	//ARRAYS
+	private ArrayList<AcquisitionDetail> selectedBookList;
 
-	public BookDialogPicker() {
+	public BookDialogPicker(ArrayList<AcquisitionDetail> bookDetail) {
+		this.selectedBookList = bookDetail;
 		initialize();
 	}
 	
@@ -182,7 +186,11 @@ public class BookDialogPicker extends JDialog {
 		tblModel.setRowCount(0);
 
 		ArrayList<BookDisplay> loadBook = bookMaintenanceController.loadBookForDisplay();
-		for(BookDisplay book : loadBook) {
+		for(BookDisplay book : loadBook) {		
+			if(isAlreadyAdded(book.getBookId())) {
+				continue;	
+			}
+			
 		Object[] bookRow = {
 				book.getBookId(),
 				book.getBookIsbn(),
@@ -214,6 +222,11 @@ public class BookDialogPicker extends JDialog {
                     : bookMaintenanceController.searchBook(keyword);
 
             for (BookDisplay book : bookList) {
+            	
+            	if(isAlreadyAdded(book.getBookId())) {
+            		continue;
+            	}
+            	
                 Object[] row = {
                         book.getBookId(),
                         book.getBookIsbn(),
@@ -231,6 +244,21 @@ public class BookDialogPicker extends JDialog {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+	
+	
+	private boolean isAlreadyAdded(int bookId) {
+
+	    for (AcquisitionDetail detail : selectedBookList) {
+
+	        if (detail.getBookId() == bookId) {
+	            return true;
+	        }
+
+	    }
+
+	    return false;
+	}
+	
 	
 	public int getSelectedBookId() {
 		return selectedBookId;

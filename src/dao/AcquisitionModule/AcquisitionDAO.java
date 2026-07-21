@@ -5,8 +5,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
+import model.AcqusitionModule.AcquisitionDetail;
 import model.AcqusitionModule.AcquisitionDisplay;
 import utility.DatabaseHelper;
 
@@ -187,6 +189,30 @@ public class AcquisitionDAO {
 	    }
 
 	    return searchAcqu;
+	}
+	
+	
+	
+	
+	
+	//ACQUISITION DETAIL
+	
+	// ACQUISITION DETAIL — batch save (uses shared connection for transaction)
+
+	public int saveAcquisitionDetail(Connection conn, AcquisitionDetail detail) throws SQLException {
+	    String sql = "INSERT INTO tbl_acquisition_detail (acquisitionId, bookId, quantity, price) VALUES (?, ?, ?, ?)";
+	    try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+	        stmt.setInt(1, detail.getAcquisitionId());
+	        stmt.setInt(2, detail.getBookId());
+	        stmt.setInt(3, detail.getQuantity());
+	        stmt.setDouble(4, detail.getPrice());
+	        stmt.executeUpdate();
+
+	        try (ResultSet rs = stmt.getGeneratedKeys()) {
+	            if (rs.next()) return rs.getInt(1);
+	        }
+	    }
+	    throw new SQLException("Failed to retrieve generated detailId.");
 	}
 	
 }
