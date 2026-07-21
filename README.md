@@ -2,7 +2,7 @@ Library Management System
 
 A desktop-based Library Management System designed to manage library operations such as book records, borrower information, circulation, inventory, and visitor monitoring.
 
-## Features
+# Features
 - Book Management (Add, Update, Delete)
 - Borrower Management for Students and Faculty
 - Book Borrowing and Returning
